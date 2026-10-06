@@ -111,3 +111,10 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 
 ### D-029 · robots.txt lists AI crawlers explicitly and never mentions the admin path
 - **Why:** explicit `Allow` groups for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc. make the GEO intent unambiguous. Listing the admin path would advertise it; the panel sends `X-Robots-Tag: noindex` instead.
+
+### D-030 · llms.txt is English-only and served as text/plain
+- **Why:** AI crawlers consume one canonical language best; the Arabic site is linked from the "Optional" section. `text/plain; charset=utf-8` displays correctly in every browser and crawler (Markdown inside).
+
+### D-031 · Third-person copy avoids gendered pronouns
+- **Why:** pronouns weren't specified, so third-person copy (FAQ, llms.txt, privacy) uses the name or neutral phrasing instead of guessing. First-person copy ("I'm Omar…") is unaffected.
+- **Change:** edit the copy in the admin if you'd like pronouns used.
