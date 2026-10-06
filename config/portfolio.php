@@ -16,6 +16,9 @@ return [
 
     'admin_path' => env('ADMIN_PATH', 'admin'),
 
+    /* Shared hosting fallback: process queued jobs from the scheduler cron (see docs/deployment.md). */
+    'queue_via_scheduler' => (bool) env('QUEUE_VIA_SCHEDULER', false),
+
     'turnstile' => [
         'site_key' => env('TURNSTILE_SITE_KEY'),
         'secret_key' => env('TURNSTILE_SECRET_KEY'),

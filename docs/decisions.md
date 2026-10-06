@@ -82,3 +82,19 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 
 ### D-020 · Project filters are plain links; filtered views are `noindex, follow`
 - **Why:** server-rendered links work without JavaScript, are crawlable, and cache per URL. Filtered pages duplicate the index, so they point their canonical to `/projects` and stay out of search results.
+
+### D-021 · Contact anti-spam: bots get a fake success; rate limits are checked before validation
+- **Why:** honeypot and time-trap hits are stored as `spam` (reviewable in the inbox) and shown the normal success screen, so bots learn nothing. Rate limits (3/10 min and 10/day per IP, 3/day per email) run before validation so the form can't be probed for free. IPs are stored only as an HMAC hash.
+- **Change:** `config/portfolio.php` → `contact`.
+
+### D-022 · The auto-reply echoes nothing but the sender's first name, at most once per address per day
+- **Why:** an auto-reply that repeats user input turns a contact form into a spam relay to any address. Sent in the language of the page the visitor used, RTL for Arabic.
+
+### D-023 · Turnstile fails closed
+- **Why:** if Cloudflare can't be reached the submission is refused with a clear message (email is shown as an alternative) rather than letting unverified traffic through while the check is enabled.
+
+### D-024 · `email:rfc,dns` validation only in production
+- **Why:** DNS lookups make tests slow and flaky offline; production still rejects domains without mail servers.
+
+### D-025 · Shared-hosting queue fallback via the scheduler
+- **Why:** shared hosts rarely allow Supervisor. With `QUEUE_VIA_SCHEDULER=true`, the per-minute cron runs `queue:work --stop-when-empty --max-time=50`. VPS deployments keep it `false` and use Supervisor.

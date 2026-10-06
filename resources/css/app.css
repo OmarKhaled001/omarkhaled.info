@@ -419,3 +419,12 @@ dialog.site-menu::backdrop {
         transform: none;
     }
 }
+
+/* Contact form honeypot: off-canvas rather than display:none, which many bots detect and skip. */
+.hp {
+    position: absolute;
+    inset-inline-start: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
