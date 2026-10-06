@@ -1,7 +1,10 @@
 @props(['seo'])
 @php
     $locale = app()->getLocale();
-    $fontPreload = $locale === 'ar' ? 'resources/fonts/plex-arabic-400.woff2' : 'resources/fonts/geist-latin.woff2';
+    // Faces used above the fold. Arabic pages also render Latin terms (Laravel, Filament) in Geist.
+    $fontPreloads = $locale === 'ar'
+        ? ['resources/fonts/plex-arabic-700.woff2', 'resources/fonts/plex-arabic-400.woff2', 'resources/fonts/geist-latin.woff2']
+        : ['resources/fonts/geist-latin.woff2'];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $locale }}" dir="{{ \App\Support\Locales::dir() }}">
@@ -10,8 +13,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>{!! \App\Support\Design\Theme::script() !!}</script>
     <x-seo :seo="$seo" />
-    <link rel="preload" href="{{ Vite::asset($fontPreload) }}" as="font" type="font/woff2" crossorigin>
+    @foreach ($fontPreloads as $font)
+    <link rel="preload" href="{{ Vite::asset($font) }}" as="font" type="font/woff2" crossorigin>
+    @endforeach
+    @if ($inlineCss = \App\Support\Design\InlineCss::css())
+    <style>{!! $inlineCss !!}</style>
+    @vite(['resources/js/app.js'])
+    @else
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     <style>{!! \App\Support\Design\Theme::accentCss() !!}</style>
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">

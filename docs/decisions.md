@@ -129,3 +129,10 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 
 ### D-034 · Filament avatars are local SVG initials
 - **Why:** Filament's default avatar provider calls ui-avatars.com, sending the admin's name to a third party and needing an extra CSP origin.
+
+### D-035 · The built stylesheet is inlined into every page
+- **Why:** it is ~6 KB compressed and was the only render-blocking request; inlining moved English LCP from 1.8 s to 1.5–1.65 s. The CSP allows it by SHA-256. **Deploys must run `php artisan responsecache:clear` after `npm run build`** (the deploy script in docs/deployment.md does).
+- **Change:** `App\Support\Design\InlineCss` (return null to go back to a `<link>`).
+
+### D-036 · Font loading tuned with measurements
+- **Why:** see docs/lighthouse.md. Arabic fonts are subset to the Arabic blocks (presentation forms aren't needed for browser shaping), Plex 500 was dropped (500 falls back to 400), Geist Mono is `optional` (small labels never shift layout).

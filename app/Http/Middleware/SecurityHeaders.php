@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Design\InlineCss;
 use App\Support\Design\Theme;
 use App\Support\Spam\Turnstile;
 use Closure;
@@ -66,6 +67,10 @@ class SecurityHeaders
         } else {
             $script[] = Theme::scriptHash();
             $style[] = $this->accentHash();
+
+            if ($cssHash = InlineCss::hash()) {
+                $style[] = $cssHash;
+            }
         }
 
         if (Vite::isRunningHot()) {
