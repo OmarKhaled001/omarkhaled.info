@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Technology extends Model
 {
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'show_on_about' => true,
+        'show_in_stack' => false,
+        'sort_order' => 0,
+    ];
+
     protected $fillable = ['slug', 'name', 'domain', 'icon', 'url', 'show_on_about', 'show_in_stack', 'sort_order'];
 
     protected function casts(): array

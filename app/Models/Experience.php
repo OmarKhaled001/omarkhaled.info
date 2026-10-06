@@ -13,6 +13,13 @@ class Experience extends Model
     /** @var list<string> */
     public array $translatable = ['role', 'description'];
 
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'is_current' => false,
+        'is_published' => false,
+        'sort_order' => 0,
+    ];
+
     protected $fillable = ['company', 'role', 'description', 'started_on', 'ended_on', 'is_current', 'is_published', 'sort_order'];
 
     protected function casts(): array

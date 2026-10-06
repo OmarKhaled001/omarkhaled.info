@@ -20,6 +20,13 @@ class Testimonial extends Model implements HasMedia
     /** @var list<string> */
     public array $translatable = ['author_role', 'company', 'quote'];
 
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'is_placeholder' => true,
+        'is_published' => false,
+        'sort_order' => 0,
+    ];
+
     protected $fillable = ['project_id', 'author_name', 'author_role', 'company', 'quote', 'is_placeholder', 'is_published', 'sort_order'];
 
     protected function casts(): array

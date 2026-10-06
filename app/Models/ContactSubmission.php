@@ -20,6 +20,11 @@ class ContactSubmission extends Model
 
     public const int SPAM_RETENTION_DAYS = 30;
 
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'status' => 'new',
+    ];
+
     protected $fillable = [
         'name', 'email', 'company', 'project_type', 'budget_range', 'message',
         'locale', 'ip_hash', 'user_agent', 'status', 'spam_reason',

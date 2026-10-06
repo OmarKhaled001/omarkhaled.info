@@ -8,6 +8,7 @@ use App\Models\Testimonial;
 use App\Settings\ContactSettings;
 use App\Settings\IdentitySettings;
 use App\Settings\SeoSettings;
+use App\Support\Anonymity\AnonymityGuard;
 use App\Support\PlaceholderDetector;
 use App\Support\Profile;
 
@@ -32,6 +33,16 @@ final class LaunchChecklist
         [IdentitySettings::class, 'hero_subheadline', 'Hero subheadline', 'identity'],
         [IdentitySettings::class, 'hero_cta_text', 'Hero CTA text', 'identity'],
     ];
+
+    /** @return list<string> slugs of projects whose public fields contain client identifiers */
+    public function leakingProjects(): array
+    {
+        $guard = app(AnonymityGuard::class);
+
+        return Project::query()->with(['features', 'facts'])->get()
+            ->filter(fn (Project $p) => $guard->leaksInFields($p) !== [])
+            ->pluck('slug')->values()->all();
+    }
 
     /**
      * Settings that still hold a placeholder.
@@ -93,6 +104,11 @@ final class LaunchChecklist
                 'label' => 'Experience timeline published',
                 'ok' => Experience::query()->where('is_published', true)->exists(),
                 'hint' => 'Add dates and publish entries under Experience.',
+            ],
+            [
+                'label' => 'No client identity leaks in anonymized projects',
+                'ok' => ($leaking = $this->leakingProjects()) === [],
+                'hint' => $leaking === [] ? 'Leak check passed for every project.' : 'Check: '.implode(', ', $leaking),
             ],
             [
                 'label' => 'Every published project has results',

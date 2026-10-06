@@ -22,6 +22,12 @@ class Service extends Model
     /** @var list<string> */
     public array $translatable = ['title', 'card_summary', 'headline', 'intro', 'problem', 'cta_text', 'meta_title', 'meta_description'];
 
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'is_published' => false,
+        'sort_order' => 0,
+    ];
+
     protected $fillable = [
         'slug', 'icon', 'title', 'card_summary', 'headline', 'intro', 'problem', 'cta_text',
         'meta_title', 'meta_description', 'is_published', 'sort_order',

@@ -14,6 +14,12 @@ class Faq extends Model
     /** @var list<string> */
     public array $translatable = ['question', 'answer'];
 
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'is_published' => true,
+        'sort_order' => 0,
+    ];
+
     protected $fillable = ['faqable_type', 'faqable_id', 'question', 'answer', 'is_published', 'sort_order'];
 
     protected function casts(): array

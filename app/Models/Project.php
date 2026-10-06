@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Enums\EngagementType;
 use App\Enums\SchemaType;
 use App\Models\Concerns\HasOptimizedImages;
+use App\Observers\ProjectObserver;
 use Database\Factories\ProjectFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +21,12 @@ use Spatie\Translatable\HasTranslations;
  * Raw case-study record. Public output must go through App\Presenters\PublicProject,
  * which applies the anonymity toggles.
  *
+ * @property EngagementType $engagement_type
+ * @property SchemaType $schema_type
+ * @property string $slug
+ * @property int|null $year
+ * @property string|null $live_url
+ * @property string|null $repo_url
  * @property bool $show_client_name
  * @property bool $show_live_link
  * @property bool $show_logo
@@ -28,6 +36,7 @@ use Spatie\Translatable\HasTranslations;
  * @property bool $is_featured
  * @property list<string>|null $client_aliases
  */
+#[ObservedBy(ProjectObserver::class)]
 class Project extends Model implements HasMedia
 {
     /** @use HasFactory<ProjectFactory> */
@@ -46,6 +55,20 @@ class Project extends Model implements HasMedia
         'title', 'anonymized_title', 'summary', 'anonymized_summary', 'client_name',
         'industry', 'role', 'challenge', 'solution', 'architecture', 'results',
         'meta_title', 'meta_description',
+    ];
+
+    /** Mirrors the column defaults so new instances are complete under strict mode. */
+    protected $attributes = [
+        'engagement_type' => 'client',
+        'schema_type' => 'CreativeWork',
+        'show_client_name' => false,
+        'show_live_link' => false,
+        'show_logo' => false,
+        'show_screenshots' => false,
+        'show_repo_link' => false,
+        'is_published' => false,
+        'is_featured' => false,
+        'sort_order' => 0,
     ];
 
     protected $fillable = [
