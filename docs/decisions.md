@@ -19,3 +19,7 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-004 · Larastan level 6 on `app/`
 - **Why:** catches real type bugs without forcing generics boilerplate everywhere.
 - **Change:** `phpstan.neon` → `level`.
+
+### D-005 · Local preview server runs via `php artisan serve` in the background, not the preview launcher
+- **Why:** on 2026-10-06 the preview launcher resolved `/home/mora-khaled/projects/.claude/launch.json` instead of this repo's and briefly started the **client-manager** dev server (`npm run dev`, port 3443). It was stopped within seconds; no files in `client-manager/` changed (verified with `find -newermt`). To guarantee no client app is ever started again, the portfolio is served with `php artisan serve --port=8000` from this repo only and the browser is pointed at that URL.
+- **Change:** use `.claude/launch.json` (config `portfolio`) once the launcher resolves this repo.

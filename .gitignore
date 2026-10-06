@@ -30,3 +30,4 @@ storage/app/seed-media/
 /storage/app/private-media/
 /public/og/
 /public/build
+/.claude/

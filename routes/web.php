@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+| Session-backed routes (middleware group "web"). Public pages live in routes/site.php.
+*/
