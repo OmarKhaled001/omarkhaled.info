@@ -2,6 +2,9 @@
 
 namespace App\Support\Design;
 
+use App\Settings\DesignSettings;
+use Throwable;
+
 /**
  * Inline <head> assets. Both are hashed into the CSP (App\Http\Middleware\SecurityHeaders),
  * which is why they must be produced only here and printed verbatim.
@@ -22,9 +25,12 @@ final class Theme
 
     public static function accentHex(): string
     {
-        $resolver = app()->bound('portfolio.accent') ? app('portfolio.accent') : null;
-
-        return is_callable($resolver) ? (string) $resolver() : AccentPalette::DEFAULT;
+        try {
+            return app(DesignSettings::class)->accent_color;
+        } catch (Throwable) {
+            // Settings table not migrated yet (fresh install, asset build): fall back to vermilion.
+            return AccentPalette::DEFAULT;
+        }
     }
 
     /** CSP source expressions for the inline assets above. */
