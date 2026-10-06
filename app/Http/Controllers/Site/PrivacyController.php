@@ -15,7 +15,8 @@ class PrivacyController extends Controller
         abort_if($page === null, 404);
 
         return view('pages.privacy', [
-            'seo' => Seo::forRoute($page->meta_title ?: $page->title, (string) $page->meta_description, 'privacy'),
+            'seo' => Seo::forRoute($page->meta_title ?: $page->title, (string) $page->meta_description, 'privacy')
+                ->withBreadcrumbs([[__('pages.breadcrumb_home'), route('home')], [$page->title, route('privacy')]]),
             'page' => $page,
         ]);
     }

@@ -21,6 +21,17 @@ final class Seo
 
     public string $type = 'website';
 
+    /** schema.org WebPage subtype for this page. */
+    public string $pageType = 'WebPage';
+
+    public bool $isHome = false;
+
+    /** Eyebrow line on the generated OG card. */
+    public ?string $ogEyebrow = null;
+
+    /** @var list<array{0: string, 1: string}> [name, absolute url] */
+    public array $breadcrumbs = [];
+
     public bool $index = true;
 
     public function __construct(
@@ -52,6 +63,24 @@ final class Seo
         return $this;
     }
 
+    /**
+     * @param  list<array{0: string, 1: string}>  $items
+     */
+    public function withBreadcrumbs(array $items): self
+    {
+        $this->breadcrumbs = $items;
+
+        return $this;
+    }
+
+    public function asPage(string $type, ?string $ogEyebrow = null): self
+    {
+        $this->pageType = $type;
+        $this->ogEyebrow = $ogEyebrow;
+
+        return $this;
+    }
+
     public function withImage(?string $url, ?string $alt = null): self
     {
         $this->image = $url;
@@ -60,10 +89,12 @@ final class Seo
         return $this;
     }
 
-    /** @param array<string, mixed> $node */
-    public function addSchema(array $node): self
+    /** @param array<string, mixed>|null $node */
+    public function addSchema(?array $node): self
     {
-        $this->schema[] = $node;
+        if ($node !== null) {
+            $this->schema[] = $node;
+        }
 
         return $this;
     }

@@ -12,7 +12,9 @@ class ContactController extends Controller
     public function __invoke(Profile $profile): View
     {
         return view('pages.contact', [
-            'seo' => Seo::forRoute(__('contact.meta_title'), __('contact.meta_description'), 'contact'),
+            'seo' => Seo::forRoute(__('contact.meta_title'), __('contact.meta_description'), 'contact')
+                ->asPage('ContactPage', __('contact.slug'))
+                ->withBreadcrumbs([[__('pages.breadcrumb_home'), route('home')], [__('contact.slug'), route('contact')]]),
             'profile' => $profile,
         ]);
     }

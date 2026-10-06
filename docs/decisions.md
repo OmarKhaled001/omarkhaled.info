@@ -98,3 +98,16 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 
 ### D-025 · Shared-hosting queue fallback via the scheduler
 - **Why:** shared hosts rarely allow Supervisor. With `QUEUE_VIA_SCHEDULER=true`, the per-minute cron runs `queue:work --stop-when-empty --max-time=50`. VPS deployments keep it `false` and use Supervisor.
+
+### D-026 · OG images are generated on first request and content-addressed (not by a queued job on save)
+- **Why:** the file name is a hash of everything drawn (title, eyebrow, locale, accent), so a card can never be stale — editing a title or revealing a client simply produces a new file, and anonymized projects always get anonymized cards. It renders with GD + ar-php (Arabic shaping), so no headless Chrome is needed on the server. With full-page caching, generation happens once per card.
+- **Change:** `App\Support\Seo\OgImage` (bump `VERSION` to regenerate all cards after a design change).
+
+### D-027 · JSON-LD and the sitemap are built by hand; spatie/schema-org and spatie/laravel-sitemap were removed
+- **Why:** plain arrays are easier to test and keep the graph in one place; the sitemap needs `x-default` alternates, which is a 15-line Blade template. Fewer dependencies to upgrade.
+
+### D-028 · FAQPage schema is emitted even though Google limits FAQ rich results
+- **Why:** since 2023 Google shows FAQ rich results only for authoritative sites, but the markup still helps AI answer engines and costs nothing.
+
+### D-029 · robots.txt lists AI crawlers explicitly and never mentions the admin path
+- **Why:** explicit `Allow` groups for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc. make the GEO intent unambiguous. Listing the admin path would advertise it; the panel sends `X-Robots-Tag: noindex` instead.

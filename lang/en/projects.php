@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'eyebrow' => 'Case study',
     'screenshot_alt' => 'Screenshot :n of :title',
     'meta_title' => 'Work — Laravel & Filament Case Studies',
     'meta_description' => 'Case studies of Laravel platforms built by Omar Khaled: B2B export, e-commerce with a design marketplace, a dental-scan SaaS, booking platforms and multilingual CMSs.',

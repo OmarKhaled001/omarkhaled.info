@@ -2,6 +2,10 @@
 @php
     /** @var \App\Support\Seo\Seo $seo */
     $locale = app()->getLocale();
+    $settings = rescue(fn () => app(\App\Settings\SeoSettings::class), null, false);
+    $indexable = $seo->index && ($settings?->indexing_enabled ?? true);
+    $seo->image ??= app(\App\Support\Seo\OgImage::class)->url($seo->title, $seo->ogEyebrow ?? __('site.role'), $locale);
+    $graph = app(\App\Support\Seo\SchemaGraph::class)->forPage($seo);
 @endphp
 <title>{{ $seo->fullTitle() }}</title>
 <meta name="description" content="{{ $seo->description }}">
@@ -12,7 +16,14 @@
 @if ($seo->xDefault())
 <link rel="alternate" hreflang="x-default" href="{{ $seo->xDefault() }}">
 @endif
-<meta name="robots" content="{{ $seo->index ? 'index, follow, max-image-preview:large, max-snippet:-1' : 'noindex, follow' }}">
+<meta name="robots" content="{{ $indexable ? 'index, follow, max-image-preview:large, max-snippet:-1' : 'noindex, follow' }}">
+@if ($settings?->google_site_verification)
+<meta name="google-site-verification" content="{{ $settings->google_site_verification }}">
+@endif
+@if ($settings?->bing_site_verification)
+<meta name="msvalidate.01" content="{{ $settings->bing_site_verification }}">
+@endif
+<meta name="author" content="{{ __('site.name') }}">
 <meta property="og:type" content="{{ $seo->type }}">
 <meta property="og:site_name" content="{{ __('site.name') }}">
 <meta property="og:title" content="{{ $seo->fullTitle() }}">
@@ -26,6 +37,7 @@
 @endforeach
 @if ($seo->image)
 <meta property="og:image" content="{{ $seo->image }}">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{{ $seo->imageAlt ?? $seo->title }}">
@@ -34,7 +46,4 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ $seo->fullTitle() }}">
 <meta name="twitter:description" content="{{ $seo->description }}">
-{{ $slot ?? '' }}
-@if ($seo->schema)
-<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@graph' => $seo->schema], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
-@endif
+<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@graph' => $graph], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>

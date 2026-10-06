@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Project;
 use App\Models\Technology;
 use App\Presenters\PublicProject;
+use App\Support\Seo\OgImage;
+use App\Support\Seo\SchemaGraph;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +33,11 @@ class ProjectController extends Controller
             ->with(['categories', 'technologies', 'media'])
             ->get();
 
-        $seo = Seo::forRoute(__('projects.meta_title'), __('projects.meta_description'), 'projects.index');
+        $presented = PublicProject::collection($projects);
+        $seo = Seo::forRoute(__('projects.meta_title'), __('projects.meta_description'), 'projects.index')
+            ->asPage('CollectionPage', __('projects.slug'))
+            ->withBreadcrumbs([[__('pages.breadcrumb_home'), route('home')], [__('projects.breadcrumb'), route('projects.index')]]);
+        $seo->addSchema(app(SchemaGraph::class)->itemList($presented, $seo->canonical));
 
         // Filtered views are navigation aids, not landing pages: keep them out of the index.
         if ($type || $tech) {
@@ -40,7 +46,7 @@ class ProjectController extends Controller
 
         return view('pages.projects.index', [
             'seo' => $seo,
-            'projects' => PublicProject::collection($projects),
+            'projects' => $presented,
             'categories' => $categories,
             'technologies' => $technologies,
             'activeType' => $type,
@@ -63,8 +69,16 @@ class ProjectController extends Controller
             ->first()
             ?? Project::query()->published()->ordered()->whereKeyNot($project->getKey())->with(['categories', 'technologies', 'media'])->first();
 
-        $seo = Seo::forRoute($presented->metaTitle(), $presented->metaDescription(), 'projects.show', ['slug' => $project->slug]);
+        $seo = Seo::forRoute($presented->metaTitle(), $presented->metaDescription(), 'projects.show', ['slug' => $project->slug])
+            ->asPage('WebPage', __('projects.eyebrow'))
+            ->withBreadcrumbs([
+                [__('pages.breadcrumb_home'), route('home')],
+                [__('projects.breadcrumb'), route('projects.index')],
+                [$presented->title(), route('projects.show', ['slug' => $project->slug])],
+            ]);
         $seo->type = 'article';
+        $seo->withImage(app(OgImage::class)->url($presented->title(), __('projects.eyebrow'), app()->getLocale()), $presented->title());
+        $seo->addSchema(app(SchemaGraph::class)->project($presented, $seo->image));
 
         return view('pages.projects.show', [
             'seo' => $seo,

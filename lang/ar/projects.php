@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'eyebrow' => 'دراسة حالة',
     'screenshot_alt' => 'لقطة شاشة رقم :n من :title',
     'meta_title' => 'الأعمال — دراسات حالة في Laravel وFilament',
     'meta_description' => 'دراسات حالة لمنصات Laravel بناها عمر خالد: منصة تصدير B2B ومتجر مع سوق للتصاميم ومنصة SaaS لمسوح الأسنان ومنصات حجوزات ومواقع متعددة اللغات.',

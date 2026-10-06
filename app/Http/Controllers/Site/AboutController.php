@@ -18,7 +18,9 @@ class AboutController extends Controller
         abort_if($page === null, 404);
 
         return view('pages.about', [
-            'seo' => Seo::forRoute($page->meta_title ?: $page->title, (string) $page->meta_description, 'about'),
+            'seo' => Seo::forRoute($page->meta_title ?: $page->title, (string) $page->meta_description, 'about')
+                ->asPage('ProfilePage', __('about.slug'))
+                ->withBreadcrumbs([[__('pages.breadcrumb_home'), route('home')], [__('site.nav.about'), route('about')]]),
             'page' => $page,
             'profile' => $profile,
             'skills' => Technology::query()->where('show_on_about', true)->orderBy('sort_order')->get()->groupBy(fn (Technology $t): string => $t->domain->value),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Presenters\PublicProject;
+use App\Support\Seo\SchemaGraph;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 
@@ -12,8 +13,12 @@ class ServiceController extends Controller
 {
     public function index(): View
     {
+        $seo = Seo::forRoute(__('services.meta_title'), __('services.meta_description'), 'services.index')
+            ->asPage('CollectionPage', __('services.slug'))
+            ->withBreadcrumbs([[__('pages.breadcrumb_home'), route('home')], [__('services.breadcrumb'), route('services.index')]]);
+
         return view('pages.services.index', [
-            'seo' => Seo::forRoute(__('services.meta_title'), __('services.meta_description'), 'services.index'),
+            'seo' => $seo,
             'services' => Service::query()->published()->ordered()->with('deliverables')->get(),
         ]);
     }
@@ -35,10 +40,21 @@ class ServiceController extends Controller
             ['slug' => $service->slug],
         );
 
+        $projects = PublicProject::collection($service->projects);
+        $graph = app(SchemaGraph::class);
+        $seo->asPage('WebPage', __('services.slug'))
+            ->withBreadcrumbs([
+                [__('pages.breadcrumb_home'), route('home')],
+                [__('services.breadcrumb'), route('services.index')],
+                [$service->title, $seo->canonical],
+            ])
+            ->addSchema($graph->service($service, $projects))
+            ->addSchema($graph->faqPage($service->faqs, $seo->canonical));
+
         return view('pages.services.show', [
             'seo' => $seo,
             'service' => $service,
-            'projects' => PublicProject::collection($service->projects),
+            'projects' => $projects,
             'others' => Service::query()->published()->ordered()->whereKeyNot($service->getKey())->get(),
         ]);
     }
