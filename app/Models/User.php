@@ -28,6 +28,13 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
 
+    /** Defaults so freshly created models expose these columns under strict mode. */
+    protected $attributes = [
+        'is_admin' => false,
+        'app_authentication_secret' => null,
+        'app_authentication_recovery_codes' => null,
+    ];
+
     /**
      * @return array<string, string>
      */

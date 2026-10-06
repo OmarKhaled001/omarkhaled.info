@@ -52,8 +52,10 @@ return [
         'media_private' => [
             'driver' => 'local',
             'root' => storage_path('app/private-media'),
+            // Only short-lived signed URLs (admin previews) can reach these files.
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/private-media',
             'visibility' => 'private',
-            'serve' => false,
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],

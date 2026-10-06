@@ -27,6 +27,16 @@ class Testimonial extends Model implements HasMedia
         return ['is_placeholder' => 'boolean', 'is_published' => 'boolean', 'sort_order' => 'integer'];
     }
 
+    protected static function booted(): void
+    {
+        // A placeholder can never go live, whatever path saves it.
+        static::saving(function (self $testimonial): void {
+            if ($testimonial->is_placeholder) {
+                $testimonial->is_published = false;
+            }
+        });
+    }
+
     /**
      * Only real, published testimonials may ever be shown publicly.
      *

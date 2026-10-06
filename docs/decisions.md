@@ -39,3 +39,23 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-009 · Settings cache is off by default
 - **Why:** avoids stale settings during local work. Production should set `SETTINGS_CACHE_ENABLED=true` (see docs/deployment.md); saving settings in Filament clears it.
 - **Change:** `.env` → `SETTINGS_CACHE_ENABLED`.
+
+### D-010 · Admin: in-house side-by-side EN | AR fields instead of a translatable plugin
+- **Why:** spatie/laravel-translatable already serialises every locale in `attributesToArray()`, so Filament fills and saves `title.en` / `title.ar` natively — no plugin (and no dependency on a plugin's Filament 5 support). Side-by-side fields also make writing both languages easier.
+- **Change:** `app/Filament/Support/Bilingual.php`.
+
+### D-011 · Admin MFA is mandatory (TOTP authenticator app, with recovery codes)
+- **Why:** the panel controls what client information is public and receives inquiries; a password alone isn't enough. Admins are created only via `php artisan portfolio:make-admin` (password typed, never stored in code/seeders).
+- **Change:** `AdminPanelProvider` → `multiFactorAuthentication(..., isRequired: false)`.
+
+### D-012 · Admin panel fonts are self-hosted too
+- **Why:** Filament defaults to Bunny Fonts (a third-party request + extra CSP origin). A tiny Vite-built `admin-fonts.css` reuses the site's Geist/Plex files.
+- **Change:** `AdminPanelProvider::font()`.
+
+### D-013 · Private media can be previewed in the admin through signed, expiring URLs only
+- **Why:** Filament's upload field needs a preview URL. `media_private` uses Laravel's local-disk `serve` option, which only serves **temporary signed** URLs; there is still no permanent public URL for hidden screenshots or logos.
+- **Change:** `config/filesystems.php` → `media_private.serve`.
+
+### D-014 · Inquiry CSV export is a bulk action with CSV-injection protection
+- **Why:** Filament's exporter needs extra tables and a queue worker for a handful of rows. Cells starting with `= + - @` are prefixed so spreadsheets never execute them.
+- **Change:** `ContactSubmissionsTable::csv()`.

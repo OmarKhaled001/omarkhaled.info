@@ -2,11 +2,8 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "omarkhaled/portfolio",
     "type": "project",
-    "description": "Omar Khaled — bilingual Laravel developer portfolio",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+    "description": "Omar Khaled \u2014 bilingual Laravel developer portfolio",
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
@@ -71,7 +68,8 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

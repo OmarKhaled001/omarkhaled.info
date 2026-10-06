@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property SubmissionStatus $status
+ * @property string $email
+ * @property string $locale
+ */
 class ContactSubmission extends Model
 {
     use MassPrunable;
