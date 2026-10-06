@@ -2,24 +2,26 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Support\Media\ScreenshotImporter;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
+    /** Idempotent: safe to re-run; it never creates users or overwrites Site Settings. */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            TaxonomySeeder::class,
+            ServiceSeeder::class,
+            ProjectSeeder::class,
+            ContentSeeder::class,
         ]);
+
+        // Client screenshots are gitignored; import them only where the capture folder exists.
+        $result = app(ScreenshotImporter::class)->import(storage_path('app/seed-media/screenshots'));
+
+        if ($result['imported'] > 0) {
+            $this->command?->info("Imported {$result['imported']} private screenshot(s).");
+        }
     }
 }

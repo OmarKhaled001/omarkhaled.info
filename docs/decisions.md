@@ -59,3 +59,19 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-014 · Inquiry CSV export is a bulk action with CSV-injection protection
 - **Why:** Filament's exporter needs extra tables and a queue worker for a handful of rows. Cells starting with `= + - @` are prefixed so spreadsheets never execute them.
 - **Change:** `ContactSubmissionsTable::csv()`.
+
+### D-015 · Client Control Panel and ArchPrep are seeded as "own product" (engagement: solo)
+- **Why:** both are your own tools/products, not client commissions. Every other project uses the default "client". All of them still start anonymized.
+- **Change:** Admin → Projects → Identity → Engagement type.
+
+### D-016 · Screenshots: only viewport captures are imported; ArchPrep has no screenshots
+- **Why:** full-page captures of scroll-pinned (GSAP) sections render as empty bands. Step 12 (running client apps for admin screenshots) was skipped as instructed, so ArchPrep and the other projects without public pages use the generated plate visuals. 32 captures (Petrogina, Cairo Key, Printalia) are stored privately and stay hidden until `show_screenshots` is turned on.
+- **Change:** upload images in Admin → Projects → Media, or `php artisan portfolio:import-media <folder>`.
+
+### D-017 · Experience entries and testimonials are seeded but hidden
+- **Why:** dates and roles from the old portfolio draft are unconfirmed, and no real testimonials exist. Both sections render only when real, published entries exist; the launch checklist reminds you.
+- **Change:** Admin → Experience / Testimonials.
+
+### D-018 · Seeders are idempotent and never touch users or Site Settings
+- **Why:** re-running `php artisan db:seed` in production refreshes copy without wiping admin edits to settings or creating credentials. Note: it does overwrite project/service copy with the seed text — after launch, edit content in the admin instead of re-seeding.
+- **Change:** `database/seeders/*`.
