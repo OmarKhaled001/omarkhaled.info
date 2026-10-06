@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        // Client-identifiable media (logos, screenshots) until a project reveals them.
+        // Not web-accessible: there is no public URL for anything stored here.
+        'media_private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private-media'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
