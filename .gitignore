@@ -34,3 +34,4 @@ storage/app/seed-media/
 /public/og/
 /public/build
 /.claude/
+/storage/media-library/
