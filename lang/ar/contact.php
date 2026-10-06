@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'meta_title' => 'تواصل — ابدأ مشروع Laravel',
+    'meta_description' => 'أخبر عمر خالد عن مشروعك في Laravel أو SaaS أو المتاجر الإلكترونية أو Filament، وستصلك إجابة خلال 24 ساعة بالخطوات التالية.',
     'project_types' => [
         'laravel-app' => 'تطبيق ويب بـ Laravel',
         'saas' => 'منتج SaaS',

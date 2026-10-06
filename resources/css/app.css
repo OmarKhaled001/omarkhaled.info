@@ -148,7 +148,7 @@
     --font-arabic: 'IBM Plex Sans Arabic', 'Geist', 'Geist Fallback', Tahoma, ui-sans-serif, sans-serif;
     --font-mono: 'Geist Mono', 'Geist Mono Fallback', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    --text-display: clamp(2.6rem, 1.4rem + 5.2vw, 5.75rem);
+    --text-display: clamp(2.5rem, 1.35rem + 4.3vw, 4.9rem);
     --text-display--line-height: 0.98;
     --text-h1: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
     --text-h1--line-height: 1.02;
@@ -205,9 +205,10 @@
         font-feature-settings: normal;
     }
 
-    :lang(ar) :is(h1, h2, h3, .text-display, .text-h1, .text-h2) {
+    /* Arabic needs taller lines than Latin display type (ascenders/descenders and dots). */
+    :lang(ar) :is(h1, h2, h3, .text-display, .text-h1, .text-h2, .text-h3) {
         letter-spacing: 0 !important;
-        line-height: 1.3;
+        line-height: 1.35 !important;
     }
 
     ::selection {

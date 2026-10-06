@@ -30,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Files uploaded after a project was revealed must land on the right disk too.
         Event::listen(function (MediaHasBeenAddedEvent $event): void {
+            // Record intrinsic dimensions so <img> always has width/height (no layout shift).
+            if (str_starts_with((string) $event->media->mime_type, 'image/') && ($size = @getimagesize($event->media->getPath()))) {
+                $event->media->setCustomProperty('width', $size[0])->setCustomProperty('height', $size[1])->saveQuietly();
+            }
+
             if ($event->media->model_type === (new Project)->getMorphClass()
                 && array_key_exists($event->media->collection_name, Project::IDENTIFIABLE_COLLECTIONS)) {
                 SyncProjectMediaVisibility::dispatch((int) $event->media->model_id);

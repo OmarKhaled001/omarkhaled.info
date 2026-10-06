@@ -75,3 +75,10 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-018 · Seeders are idempotent and never touch users or Site Settings
 - **Why:** re-running `php artisan db:seed` in production refreshes copy without wiping admin edits to settings or creating credentials. Note: it does overwrite project/service copy with the seed text — after launch, edit content in the admin instead of re-seeding.
 - **Change:** `database/seeders/*`.
+
+### D-019 · Anonymized projects get generated SVG "plates" instead of images
+- **Why:** anonymized work can't show screenshots, and blank cards look unfinished. Each plate is drawn server-side from the project's index, category and stack (a print-plate motif with registration marks) — zero image bytes, crisp in both themes, impossible to identify a client from.
+- **Change:** upload a non-identifying cover in Admin → Projects → Media, or reveal screenshots.
+
+### D-020 · Project filters are plain links; filtered views are `noindex, follow`
+- **Why:** server-rendered links work without JavaScript, are crawlable, and cache per URL. Filtered pages duplicate the index, so they point their canonical to `/projects` and stay out of search results.

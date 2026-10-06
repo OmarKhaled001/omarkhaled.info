@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'meta_title' => 'Contact — Start a Laravel Project',
+    'meta_description' => 'Tell Omar Khaled about your Laravel, SaaS, e-commerce or Filament project. Replies within 24 hours with next steps.',
     'project_types' => [
         'laravel-app' => 'Laravel web application',
         'saas' => 'SaaS product',

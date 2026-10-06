@@ -6,6 +6,11 @@ use App\Enums\TechnologyDomain;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property TechnologyDomain $domain
+ * @property string $name
+ * @property string $slug
+ */
 class Technology extends Model
 {
     /** Mirrors the column defaults so new instances are complete under strict mode. */

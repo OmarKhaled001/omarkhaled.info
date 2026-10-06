@@ -57,9 +57,11 @@ final class Profile
     /** e.g. "UTC+3" right now (Egypt observes DST). */
     public function utcOffsetLabel(): string
     {
-        $offset = Carbon::now($this->timezone())->format('P');
+        $seconds = Carbon::now($this->timezone())->getOffset();
+        $hours = intdiv($seconds, 3600);
+        $minutes = abs(intdiv($seconds % 3600, 60));
 
-        return 'UTC'.preg_replace('/:00$/', '', $offset);
+        return 'UTC'.($seconds >= 0 ? '+' : '−').abs($hours).($minutes ? ':'.str_pad((string) $minutes, 2, '0', STR_PAD_LEFT) : '');
     }
 
     public function workingHours(): string
