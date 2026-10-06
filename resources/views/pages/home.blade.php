@@ -67,7 +67,7 @@
         </div>
         <ul class="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($services as $service)
-                <li class="group relative bg-surface p-6 transition-colors hover:bg-surface-2 sm:p-7" data-reveal style="--reveal-delay: {{ $loop->index }}">
+                <li class="group relative bg-surface p-6 transition-colors hover:bg-surface-2 sm:p-7" data-reveal data-reveal-delay="{{ min($loop->index, 5) }}">
                     <span class="inline-flex size-10 items-center justify-center rounded-md border border-border bg-bg text-accent-text" aria-hidden="true">
                         <x-dynamic-component :component="'lucide-'.($service->icon ?: 'code')" class="size-5" />
                     </span>
@@ -91,7 +91,7 @@
             <div class="mt-12 grid gap-5 md:grid-cols-6">
                 @foreach ($projects as $project)
                     <x-site.project-card :project="$project" :index="$loop->iteration" :feature="$loop->first"
-                        data-reveal style="--reveal-delay: {{ $loop->index }}"
+                        data-reveal data-reveal-delay="{{ min($loop->index, 5) }}"
                         :class="\Illuminate\Support\Arr::toCssClasses([
                             'md:col-span-4 md:row-span-2' => $loop->index === 0,
                             'md:col-span-2' => in_array($loop->index, [1, 2], true),
@@ -107,7 +107,7 @@
         <x-site.section-header :index="3" :slug="__('home.process.slug')" :title="__('home.process.title')" :lede="__('home.process.lede')" id="process-title" />
         <ol class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             @foreach (__('home.process.steps') as $i => [$title, $body])
-                <li class="relative border-t border-border-strong pt-6" data-reveal style="--reveal-delay: {{ $i }}">
+                <li class="relative border-t border-border-strong pt-6" data-reveal data-reveal-delay="{{ min($i, 5) }}">
                     <span class="absolute -top-px start-0 h-px w-12 bg-accent" aria-hidden="true"></span>
                     <span class="font-mono text-sm text-accent-text">{{ str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) }}</span>
                     <h3 class="mt-3 text-lg font-semibold">{{ $title }}</h3>

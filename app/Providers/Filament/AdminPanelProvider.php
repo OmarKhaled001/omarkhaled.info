@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Support\InitialsAvatarProvider;
 use App\Http\Middleware\NoIndex;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\FontProviders\LocalFontProvider;
@@ -36,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
                 AppAuthentication::make()->recoverable(),
             ], isRequired: true)
             ->brandName('Omar Khaled — Admin')
+            ->defaultAvatarProvider(InitialsAvatarProvider::class)
             ->favicon(asset('favicon.svg'))
             ->colors([
                 'primary' => Color::hex('#E8542A'),

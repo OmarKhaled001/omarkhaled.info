@@ -49,7 +49,7 @@
         <h2 id="process-title" class="mt-3 text-h2 font-semibold tracking-display">{{ __('services.process') }}</h2>
         <ol class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ($service->processSteps as $step)
-                <li class="relative border-t border-border-strong pt-6" data-reveal style="--reveal-delay: {{ $loop->index }}">
+                <li class="relative border-t border-border-strong pt-6" data-reveal data-reveal-delay="{{ min($loop->index, 5) }}">
                     <span class="absolute -top-px start-0 h-px w-12 bg-accent" aria-hidden="true"></span>
                     <span class="font-mono text-sm text-accent-text">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                     <h3 class="mt-3 text-lg font-semibold">{{ $step->title }}</h3>

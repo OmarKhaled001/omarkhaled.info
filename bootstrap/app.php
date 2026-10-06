@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\PublicCacheHeaders;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Foundation\Application;
@@ -9,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -24,13 +27,20 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(SecurityHeaders::class);
+
+        // Outer to inner: cache headers wrap the response cache so cached hits get them too.
         $middleware->group('public', [
             SetLocale::class,
             SubstituteBindings::class,
+            PublicCacheHeaders::class,
+            CacheResponse::class,
         ]);
 
         $middleware->group('public.static', [
             SubstituteBindings::class,
+            PublicCacheHeaders::class,
+            CacheResponse::class,
         ]);
 
         $middleware->alias([

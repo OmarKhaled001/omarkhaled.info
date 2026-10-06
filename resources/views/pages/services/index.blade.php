@@ -12,7 +12,7 @@
     <section class="container-site mt-16">
         <ul class="grid gap-5 md:grid-cols-2">
             @foreach ($services as $service)
-                <li class="crop-marks card group relative flex flex-col p-7 sm:p-8" data-reveal style="--reveal-delay: {{ $loop->index }}">
+                <li class="crop-marks card group relative flex flex-col p-7 sm:p-8" data-reveal data-reveal-delay="{{ min($loop->index, 5) }}">
                     <div class="flex items-start justify-between gap-6">
                         <span class="inline-flex size-11 items-center justify-center rounded-md border border-border bg-bg text-accent-text" aria-hidden="true">
                             <x-dynamic-component :component="'lucide-'.($service->icon ?: 'code')" class="size-5" />

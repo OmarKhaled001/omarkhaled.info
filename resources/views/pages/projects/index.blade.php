@@ -50,7 +50,7 @@
         @else
             <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($projects as $project)
-                    <x-site.project-card :project="$project" :index="$loop->iteration" headingLevel="h2" data-reveal style="--reveal-delay: {{ $loop->index % 3 }}" />
+                    <x-site.project-card :project="$project" :index="$loop->iteration" headingLevel="h2" data-reveal data-reveal-delay="{{ min($loop->index % 3, 5) }}" />
                 @endforeach
             </div>
         @endif

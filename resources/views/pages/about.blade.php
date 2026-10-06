@@ -20,7 +20,7 @@
         <h2 id="design-title" class="mt-3 max-w-3xl text-h2 font-semibold tracking-display text-balance">{{ __('about.design.title') }}</h2>
         <ul class="mt-10 grid gap-5 md:grid-cols-3">
             @foreach (__('about.design.points') as [$title, $body])
-                <li class="card p-6" data-reveal style="--reveal-delay: {{ $loop->index }}">
+                <li class="card p-6" data-reveal data-reveal-delay="{{ min($loop->index, 5) }}">
                     <h3 class="font-semibold">{{ $title }}</h3>
                     <p class="mt-2 text-[0.95rem] text-muted">{{ $body }}</p>
                 </li>

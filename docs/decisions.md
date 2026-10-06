@@ -118,3 +118,14 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-031 · Third-person copy avoids gendered pronouns
 - **Why:** pronouns weren't specified, so third-person copy (FAQ, llms.txt, privacy) uses the name or neutral phrasing instead of guessing. First-person copy ("I'm Omar…") is unaffected.
 - **Change:** edit the copy in the admin if you'd like pronouns used.
+
+### D-032 · CSP per surface (public / contact / admin), hashes instead of nonces on public pages
+- **Why:** nonces don't work with full-page caching (a cached nonce never matches a new header). Public pages allow exactly two inline blocks by SHA-256 (the pre-paint theme script and the accent tokens), no `unsafe-inline`/`unsafe-eval`. The contact page needs `unsafe-eval` for Alpine (Livewire 4 is not in CSP-safe mode because Filament's Alpine expressions require eval); the admin needs inline code and sits behind login + MFA. Scroll-reveal delays moved from inline `style` attributes to `data-reveal-delay` so nothing inline violates the policy.
+- **Change:** `App\Http\Middleware\SecurityHeaders`.
+
+### D-033 · Full-page cache: only 200 responses on session-less routes; any content/settings change clears everything
+- **Why:** the `/` redirect varies by Accept-Language and 404s must not stick. The site is small, so clearing the whole cache on any save is simpler and always correct. Browsers/CDNs get `max-age=300, s-maxage=600, stale-while-revalidate=86400`.
+- **Change:** `App\Http\Cache\PublicPageCacheProfile`, `AppServiceProvider::CACHED_MODELS`, `RESPONSE_CACHE_*` env.
+
+### D-034 · Filament avatars are local SVG initials
+- **Why:** Filament's default avatar provider calls ui-avatars.com, sending the admin's name to a third party and needing an extra CSP origin.
