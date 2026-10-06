@@ -25,6 +25,12 @@ class FaqResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    protected static ?string $navigationLabel = 'FAQs';
+
+    protected static ?string $modelLabel = 'FAQ';
+
+    protected static ?string $pluralModelLabel = 'FAQs';
+
     public static function form(Schema $schema): Schema
     {
         return FaqForm::configure($schema);
