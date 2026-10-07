@@ -2,10 +2,10 @@
 
 return [
     'slug' => 'Contact',
-    'title' => 'Start a project',
-    'lede' => 'Tell me what you’re building and where you’re stuck. A few lines are enough — I’ll reply with questions or next steps.',
+    'title' => 'Let’s talk',
+    'lede' => 'Tell me what you’re building and where you’re stuck — or about the role you’re hiring for. A few lines are enough; I’ll reply with questions or next steps.',
     'form' => [
-        'label' => 'Project inquiry',
+        'label' => 'Inquiry',
         'name' => 'Your name',
         'email' => 'Work email',
         'company' => 'Company',
@@ -13,8 +13,8 @@ return [
         'project_type' => 'What do you need?',
         'budget' => 'Budget range',
         'select' => 'Choose…',
-        'message' => 'About the project',
-        'message_hint' => 'Goals, timeline, links to anything that exists today.',
+        'message' => 'Details',
+        'message_hint' => 'Goals, timeline and links — or, for a role: the team, stack and type of contract.',
         'submit' => 'Send inquiry',
         'sending' => 'Sending…',
         'privacy' => 'Your details are used only to reply. See the :link.',
@@ -58,8 +58,8 @@ return [
         'signoff' => 'Best regards,',
         'footer' => 'You received this because this address was used on the contact form at omarkhaled.info.',
     ],
-    'meta_title' => 'Contact — Start a Laravel Project',
-    'meta_description' => 'Tell Omar Khaled about your Laravel, SaaS, e-commerce or Filament project. Replies within 24 hours with next steps.',
+    'meta_title' => 'Contact — Start a Laravel Project or Discuss a Role',
+    'meta_description' => 'Tell Omar Khaled about your Laravel, SaaS, e-commerce or Filament project — or a full-time or contract role. Replies within 24 hours with next steps.',
     'project_types' => [
         'laravel-app' => 'Laravel web application',
         'saas' => 'SaaS product',
@@ -67,6 +67,7 @@ return [
         'admin-panel' => 'CRM / admin panel',
         'api' => 'API / integration',
         'audit' => 'Performance or security audit',
+        'job-role' => 'A job or contract role',
         'other' => 'Something else',
     ],
     'budgets' => [
@@ -76,5 +77,6 @@ return [
         '15k-30k' => '$15,000 – $30,000',
         '30k-plus' => '$30,000+',
         'not-sure' => 'Not sure yet',
+        'not-applicable' => 'Not applicable (role)',
     ],
 ];

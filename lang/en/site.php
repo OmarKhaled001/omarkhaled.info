@@ -21,6 +21,8 @@ return [
 
     'cta' => [
         'start_project' => 'Start a project',
+        'download_cv' => 'Download CV',
+        'discuss_role' => 'Discuss a role',
         'see_work' => 'See selected work',
         'all_projects' => 'All projects',
         'all_services' => 'All services',
@@ -38,7 +40,7 @@ return [
     ],
 
     'footer' => [
-        'tagline' => 'Laravel platforms, back-offices and APIs for teams worldwide — designed with a designer’s eye, shipped with tests.',
+        'tagline' => 'Laravel platforms, back-offices and APIs — built for clients worldwide, or as part of your team. Designed with a designer’s eye, shipped with tests.',
         'explore' => 'Explore',
         'services' => 'Services',
         'elsewhere' => 'Elsewhere',

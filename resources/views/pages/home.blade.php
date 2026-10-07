@@ -32,8 +32,20 @@
                             {{ $profile->heroCtaText() }}
                             <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
                         </a>
-                        <a href="{{ route('projects.index') }}" class="btn-secondary">{{ __('site.cta.see_work') }}</a>
+                        @if ($cvUrl = $profile->cvUrl())
+                            <a href="{{ $cvUrl }}" class="btn-secondary" download>
+                                <x-lucide-download class="size-4" aria-hidden="true" />
+                                {{ __('site.cta.download_cv') }}
+                            </a>
+                        @endif
+                        <a href="{{ route('projects.index') }}" @class(['btn-ghost' => $cvUrl, 'btn-secondary' => ! $cvUrl])>{{ __('site.cta.see_work') }}</a>
                     </div>
+                    @if ($rolesNote = $profile->rolesNote())
+                        <p class="mt-5 flex items-center gap-2 text-[0.9rem] text-muted">
+                            <x-lucide-briefcase class="size-4 shrink-0 text-accent-text" aria-hidden="true" />
+                            {{ $rolesNote }}
+                        </p>
+                    @endif
 
                     <dl class="mt-10 grid max-w-xl grid-cols-2 gap-x-6 gap-y-4 border-t border-dashed border-border pt-6 text-[0.85rem] sm:grid-cols-3" aria-label="{{ __('home.spec.title') }}">
                         <div><dt class="slug">{{ __('home.spec.stack') }}</dt><dd class="mt-1 font-medium">{{ __('home.spec.stack_value') }}</dd></div>
@@ -81,6 +93,51 @@
                         <li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-border-strong" aria-hidden="true"></span>{{ $tech->name }}</li>
                     @endforeach
                 </ul>
+            </div>
+        </section>
+    @endif
+
+    {{-- Two audiences: clients with a project, companies hiring. --}}
+    @if ($profile->openToRoles())
+        <section class="container-site mt-24 sm:mt-28" aria-labelledby="audiences-title">
+            <x-site.section-header :slug="__('home.audiences.slug')" :title="__('home.audiences.title')" :lede="__('home.audiences.lede')" id="audiences-title" />
+            <div class="mt-12 grid gap-5 md:grid-cols-2">
+                @foreach (['clients', 'employers'] as $audience)
+                    <article class="card relative flex flex-col p-7 sm:p-8" aria-labelledby="audience-{{ $audience }}" data-reveal data-reveal-delay="{{ $loop->index }}">
+                        <span class="absolute -top-px start-7 h-px w-14 bg-accent" aria-hidden="true"></span>
+                        <p class="slug flex items-center gap-2">
+                            <x-dynamic-component :component="$audience === 'clients' ? 'lucide-rocket' : 'lucide-briefcase'" class="size-4 text-accent-text" aria-hidden="true" />
+                            {{ __("home.audiences.{$audience}.eyebrow") }}
+                        </p>
+                        <h3 id="audience-{{ $audience }}" class="mt-4 text-h3 font-semibold tracking-tight">{{ __("home.audiences.{$audience}.title") }}</h3>
+                        <p class="mt-3 text-muted">{{ __("home.audiences.{$audience}.body") }}</p>
+                        <ul class="mt-6 space-y-2.5 text-[0.95rem]">
+                            @foreach (__("home.audiences.{$audience}.points", ['location' => $profile->location(), 'offset' => $profile->utcOffsetLabel()]) as $point)
+                                <li class="flex gap-3"><x-lucide-check class="mt-1 size-4 shrink-0 text-accent-text" aria-hidden="true" />{{ $point }}</li>
+                            @endforeach
+                        </ul>
+                        <div class="mt-auto flex flex-wrap gap-3 pt-8">
+                            @if ($audience === 'clients')
+                                <a href="{{ route('contact') }}" class="btn-primary">
+                                    {{ $profile->heroCtaText() }}
+                                    <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
+                                </a>
+                                <a href="{{ route('services.index') }}" class="btn-ghost">{{ __('site.cta.all_services') }}</a>
+                            @else
+                                @if ($cvUrl)
+                                    <a href="{{ $cvUrl }}" class="btn-primary" download>
+                                        <x-lucide-download class="size-4" aria-hidden="true" />
+                                        {{ __('site.cta.download_cv') }}
+                                    </a>
+                                @endif
+                                <a href="{{ route('contact', ['type' => config('portfolio.contact.role_type')]) }}" @class(['btn-secondary' => $cvUrl, 'btn-primary' => ! $cvUrl])>
+                                    {{ __('site.cta.discuss_role') }}
+                                    <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
+                                </a>
+                            @endif
+                        </div>
+                    </article>
+                @endforeach
             </div>
         </section>
     @endif

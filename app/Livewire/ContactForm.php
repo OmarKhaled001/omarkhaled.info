@@ -52,6 +52,31 @@ class ContactForm extends Component
         $this->locale = Locales::isSupported(app()->getLocale()) ? app()->getLocale() : Locales::DEFAULT;
         $this->issuedAt = Crypt::encryptString((string) now()->getTimestamp());
         $this->applyLocale();
+
+        // Deep links such as /en/contact?type=job-role preselect the inquiry type.
+        $type = request()->query('type');
+        if (is_string($type) && in_array($type, $this->projectTypeOptions(), true)) {
+            $this->project_type = $type;
+        }
+    }
+
+    /** @return list<string> */
+    private function projectTypeOptions(): array
+    {
+        $types = config()->array('portfolio.contact.project_types');
+
+        return array_values(app(Profile::class)->openToRoles() ? $types : array_diff($types, [$this->roleType()]));
+    }
+
+    private function roleType(): string
+    {
+        return (string) config('portfolio.contact.role_type');
+    }
+
+    /** Role inquiries are about employment, so no project budget is asked. */
+    public function isRoleInquiry(): bool
+    {
+        return $this->project_type === $this->roleType();
     }
 
     public function hydrate(): void
@@ -74,8 +99,10 @@ class ContactForm extends Component
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'max:255', app()->environment('production') ? 'email:rfc,dns' : 'email:rfc'],
             'company' => ['nullable', 'string', 'max:120'],
-            'project_type' => ['required', Rule::in(config('portfolio.contact.project_types'))],
-            'budget_range' => ['required', Rule::in(config('portfolio.contact.budget_ranges'))],
+            'project_type' => ['required', Rule::in($this->projectTypeOptions())],
+            'budget_range' => $this->isRoleInquiry()
+                ? ['nullable']
+                : ['required', Rule::in(array_diff(config()->array('portfolio.contact.budget_ranges'), ['not-applicable']))],
             'message' => ['required', 'string', 'min:20', 'max:5000'],
         ];
     }
@@ -103,6 +130,9 @@ class ContactForm extends Component
         }
 
         $data = $this->validate();
+        if ($this->isRoleInquiry()) {
+            $data['budget_range'] = 'not-applicable';
+        }
 
         $emailKey = 'contact:email:'.sha1(mb_strtolower($data['email']));
         if (RateLimiter::tooManyAttempts($emailKey, $limits['email_per_day'])) {
@@ -165,8 +195,9 @@ class ContactForm extends Component
         return view('livewire.contact-form', [
             'hours' => $profile->responseTimeHours(),
             'turnstileSiteKey' => $turnstile->enabled() ? $turnstile->siteKey() : null,
-            'projectTypes' => collect(config()->array('portfolio.contact.project_types'))->mapWithKeys(fn (string $v) => [$v => __("contact.project_types.{$v}")]),
-            'budgets' => collect(config()->array('portfolio.contact.budget_ranges'))->mapWithKeys(fn (string $v) => [$v => __("contact.budgets.{$v}")]),
+            'projectTypes' => collect($this->projectTypeOptions())->mapWithKeys(fn (string $v) => [$v => __("contact.project_types.{$v}")]),
+            'budgets' => collect(config()->array('portfolio.contact.budget_ranges'))->reject(fn (string $v) => $v === 'not-applicable')
+                ->mapWithKeys(fn (string $v) => [$v => __("contact.budgets.{$v}")]),
         ]);
     }
 }

@@ -25,6 +25,12 @@
         <div class="flex items-center gap-1">
             <x-language-switch />
             <x-theme-toggle />
+            @if ($cvUrl = app(\App\Support\Profile::class)->cvUrl())
+                <a href="{{ $cvUrl }}" class="btn-secondary ms-2 hidden min-h-10 px-4 text-sm lg:inline-flex" download>
+                    <x-lucide-download class="size-4" aria-hidden="true" />
+                    {{ __('site.cta.download_cv') }}
+                </a>
+            @endif
             @if (Route::has('contact'))
                 <a href="{{ route('contact') }}" class="btn-primary ms-2 hidden min-h-10 px-4 text-sm lg:inline-flex">
                     {{ __('site.cta.start_project') }}
@@ -60,6 +66,12 @@
         </ul>
         @if (Route::has('contact'))
             <a href="{{ route('contact') }}" class="btn-primary mx-3 mt-6 flex">{{ __('site.cta.start_project') }}</a>
+        @endif
+        @if ($cvUrl = app(\App\Support\Profile::class)->cvUrl())
+            <a href="{{ $cvUrl }}" class="btn-secondary mx-3 mt-3 flex" download>
+                <x-lucide-download class="size-4" aria-hidden="true" />
+                {{ __('site.cta.download_cv') }}
+            </a>
         @endif
     </nav>
 </dialog>

@@ -9,6 +9,7 @@ use App\Settings\ContactSettings;
 use App\Settings\IdentitySettings;
 use App\Settings\SeoSettings;
 use App\Support\Anonymity\AnonymityGuard;
+use App\Support\Design\Brand;
 use App\Support\PlaceholderDetector;
 use App\Support\Profile;
 
@@ -84,6 +85,16 @@ final class LaunchChecklist
                 'hint' => $profile->email()
                     ? 'Using the contact email from Site Settings.'
                     : ($profile->mailRecipient() ? 'Using MAIL_CONTACT_ADDRESS from .env (Site Settings email is a placeholder).' : 'Set a contact email in Site Settings or MAIL_CONTACT_ADDRESS in .env — inquiries are stored but not emailed.'),
+            ],
+            [
+                'label' => 'CV uploaded',
+                'ok' => ! $profile->openToRoles() || $profile->cvPath('en') !== null,
+                'hint' => 'Settings → Hiring & CV. The "Download CV" buttons appear once a PDF is uploaded.',
+            ],
+            [
+                'label' => 'Logo uploaded',
+                'ok' => Brand::logo() !== null,
+                'hint' => 'Settings → Design → Logo. Also generates the favicons.',
             ],
             [
                 'label' => 'Search engines may index the site',

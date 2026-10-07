@@ -47,7 +47,10 @@ final readonly class LlmsTxt
 
             array_push($out, '', '## About', '');
             $out[] = '- [About '.$this->profile->name().']('.route('about').'): background (graphic design → full-stack development), skills by domain and working style with remote teams.';
-            $out[] = '- [Contact]('.route('contact').'): project inquiry form; replies within '.$this->profile->responseTimeHours().' hours.';
+            $out[] = '- [Contact]('.route('contact').'): project or hiring inquiry form; replies within '.$this->profile->responseTimeHours().' hours.';
+            if ($rolesNote = $this->profile->rolesNote('en')) {
+                $out[] = "- Hiring: {$rolesNote}.".($this->profile->cvUrl('en') ? ' [CV (PDF)]('.$this->profile->cvUrl('en').')' : '');
+            }
             if ($email = $this->profile->email()) {
                 $out[] = "- Email: {$email}";
             }

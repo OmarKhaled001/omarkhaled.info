@@ -2,10 +2,12 @@
 
 namespace App\Support;
 
+use App\Settings\CareerSettings;
 use App\Settings\ContactSettings;
 use App\Settings\IdentitySettings;
 use DateTimeZone;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -26,7 +28,43 @@ final class Profile
     public function __construct(
         private readonly IdentitySettings $identity,
         private readonly ContactSettings $contact,
+        private readonly CareerSettings $career,
     ) {}
+
+    /** Whether the site also addresses employers (roles note, CV, "hiring" inquiries). */
+    public function openToRoles(): bool
+    {
+        return $this->career->open_to_roles;
+    }
+
+    public function rolesNote(?string $locale = null): ?string
+    {
+        return $this->openToRoles() ? $this->translated($this->career->roles_note, $locale) : null;
+    }
+
+    /** Path of the CV on the public disk for a locale, falling back to the other language. */
+    public function cvPath(?string $locale = null): ?string
+    {
+        $locale ??= app()->getLocale();
+        $disk = Storage::disk('public');
+        $candidates = $locale === 'ar' ? [$this->career->cv_ar, $this->career->cv_en] : [$this->career->cv_en, $this->career->cv_ar];
+
+        foreach ($candidates as $path) {
+            if ($path && $disk->exists($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
+
+    /** Stable download URL (/{locale}/cv), or null while no CV is uploaded. */
+    public function cvUrl(?string $locale = null): ?string
+    {
+        $locale ??= app()->getLocale();
+
+        return $this->cvPath($locale) ? route('cv', ['locale' => $locale]) : null;
+    }
 
     public function name(?string $locale = null): string
     {

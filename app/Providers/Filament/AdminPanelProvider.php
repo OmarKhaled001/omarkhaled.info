@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Support\InitialsAvatarProvider;
 use App\Http\Middleware\NoIndex;
+use App\Support\Design\Brand;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
@@ -21,6 +22,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -37,6 +39,12 @@ class AdminPanelProvider extends PanelProvider
                 AppAuthentication::make()->recoverable(),
             ], isRequired: true)
             ->brandName('Omar Khaled — Admin')
+            ->brandLogo(fn (): ?string => Brand::logo()['url'] ?? null)
+            ->darkModeBrandLogo(fn (): string|HtmlString|null => ($dark = Brand::logo('dark')) ? $dark['url'] : (($light = Brand::logo())
+                // No dark variant: recolour the light logo (same filter as the public site).
+                ? new HtmlString('<img src="'.e($light['url']).'" alt="Omar Khaled" style="height:2rem;width:auto;filter:invert(1) hue-rotate(180deg)">')
+                : null))
+            ->brandLogoHeight('2rem')
             ->defaultAvatarProvider(InitialsAvatarProvider::class)
             ->favicon(asset('favicon.svg'))
             ->colors([

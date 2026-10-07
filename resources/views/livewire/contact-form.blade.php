@@ -44,13 +44,14 @@
             <div class="grid gap-6 sm:grid-cols-2">
                 <div>
                     <label for="cf-type" class="{{ $label }}">{{ __('contact.form.project_type') }}</label>
-                    <select id="cf-type" wire:model="project_type" required class="{{ $field }}"
+                    <select id="cf-type" wire:model.live="project_type" required class="{{ $field }}"
                         @error('project_type') aria-invalid="true" aria-describedby="cf-type-error" @enderror>
                         <option value="">{{ __('contact.form.select') }}</option>
                         @foreach ($projectTypes as $value => $text)<option value="{{ $value }}">{{ $text }}</option>@endforeach
                     </select>
                     @error('project_type')<p id="cf-type-error" class="{{ $error }}">{{ $message }}</p>@enderror
                 </div>
+                @unless ($this->isRoleInquiry())
                 <div>
                     <label for="cf-budget" class="{{ $label }}">{{ __('contact.form.budget') }}</label>
                     <select id="cf-budget" wire:model="budget_range" required class="{{ $field }}"
@@ -60,6 +61,7 @@
                     </select>
                     @error('budget_range')<p id="cf-budget-error" class="{{ $error }}">{{ $message }}</p>@enderror
                 </div>
+                @endunless
             </div>
 
             <div>

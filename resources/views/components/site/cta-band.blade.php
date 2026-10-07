@@ -9,10 +9,18 @@
                 <p class="mt-4 max-w-xl text-lede text-muted">{{ __('home.cta.body', ['hours' => $profile->responseTimeHours()]) }}</p>
             </div>
             <div class="flex flex-col gap-3 md:col-span-4 md:items-end">
-                <a href="{{ route('contact') }}" class="btn-primary">
-                    {{ $profile->heroCtaText() }}
-                    <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
-                </a>
+                <div class="flex flex-wrap gap-3 md:justify-end">
+                    <a href="{{ route('contact') }}" class="btn-primary">
+                        {{ $profile->heroCtaText() }}
+                        <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
+                    </a>
+                    @if ($cvUrl = $profile->cvUrl())
+                        <a href="{{ $cvUrl }}" class="btn-secondary" download>
+                            <x-lucide-download class="size-4" aria-hidden="true" />
+                            {{ __('site.cta.download_cv') }}
+                        </a>
+                    @endif
+                </div>
                 @if ($email = $profile->email())
                     <p class="text-sm text-muted">{{ __('home.cta.email') }} <a href="mailto:{{ $email }}" class="font-medium text-ink underline decoration-border-strong underline-offset-4 hover:decoration-accent">{{ $email }}</a></p>
                 @endif

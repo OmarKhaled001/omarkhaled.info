@@ -3,12 +3,20 @@
         <div class="md:col-span-5">
             <x-wordmark />
             <p class="mt-4 max-w-sm text-[0.95rem] text-muted">{{ __('site.footer.tagline') }}</p>
-            @if (Route::has('contact'))
-                <a href="{{ route('contact') }}" class="btn-primary mt-6">
-                    {{ __('site.cta.start_project') }}
-                    <x-lucide-arrow-up-right class="icon-dir size-4" aria-hidden="true" />
-                </a>
-            @endif
+            <div class="mt-6 flex flex-wrap gap-3">
+                @if (Route::has('contact'))
+                    <a href="{{ route('contact') }}" class="btn-primary">
+                        {{ __('site.cta.start_project') }}
+                        <x-lucide-arrow-up-right class="icon-dir size-4" aria-hidden="true" />
+                    </a>
+                @endif
+                @if ($cvUrl = app(\App\Support\Profile::class)->cvUrl())
+                    <a href="{{ $cvUrl }}" class="btn-secondary" download>
+                        <x-lucide-download class="size-4" aria-hidden="true" />
+                        {{ __('site.cta.download_cv') }}
+                    </a>
+                @endif
+            </div>
         </div>
 
         <nav class="md:col-span-2" aria-labelledby="footer-explore">

@@ -23,9 +23,16 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
     <style>{!! \App\Support\Design\Theme::accentCss() !!}</style>
+    @if ($favicon = \App\Support\Design\Brand::icon('favicon-32.png'))
+    {{-- Generated from the logo uploaded in Admin → Settings → Design. --}}
+    <link rel="icon" href="{{ $favicon }}" sizes="32x32" type="image/png">
+    <link rel="icon" href="{{ \App\Support\Design\Brand::icon('favicon-192.png') }}" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="{{ \App\Support\Design\Brand::icon('apple-touch-icon.png') }}">
+    @else
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    @endif
     <meta name="theme-color" content="#F7F6F2" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0A0A0B" media="(prefers-color-scheme: dark)">
     {{ $head ?? '' }}

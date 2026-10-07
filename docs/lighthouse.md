@@ -3,10 +3,12 @@
 _Measured 2026-10-07 with Lighthouse 12.8.2, mobile form factor, default simulated throttling (slow 4G, 4× CPU), headless Chromium._
 _Setup: `APP_DEBUG=false`, full-page cache warm, assets built with `npm run build`, behind a reverse proxy doing Brotli/gzip and long-lived caching for `/build/*` — the same things nginx/Caddy do in production (see `docs/deployment.md`)._
 
+_Home rows re-measured after the 3D hero, CV and logo changes (D-037–D-039). Headless Chromium renders WebGL in software, so audits see the CSS-3D fallback; GPU devices run WebGL lazily after load (see D-037). axe: 0 violations, no overflow at 360 px._
+
 | Page | Performance | Accessibility | Best practices | SEO | LCP | CLS | TBT | FCP |
 |---|---|---|---|---|---|---|---|---|
-| `/en` (home) | **100** | **100** | **100** | **100** | 1.65 s | 0 | 0 ms | 1.4 s |
-| `/ar` (home) | **99** | **100** | **100** | **100** | 1.81 s | 0 | 0 ms | 1.1 s |
+| `/en` (home, 3D hero) | **100** | **100** | **100** | **100** | 1.7 s | 0 | 0 ms | 1.4 s |
+| `/ar` (home, 3D hero) | **100** | **100** | **100** | **100** | 1.7 s | 0 | 0 ms | 1.1 s |
 | `/en/services/filament-admin-panels` | **100** | **100** | **100** | **100** | 1.65 s | 0 | 0 ms | 1.4 s |
 | `/ar/services/filament-admin-panels` | **99** | **100** | **100** | **100** | 1.81 s | 0 | 0 ms | 1.1 s |
 | `/en/projects/b2b-export-platform` | **100** | **100** | **100** | **100** | 1.50 s | 0 | 0 ms | 1.4 s |

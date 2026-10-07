@@ -39,7 +39,7 @@ it('renders every admin screen for an admin', function (string $path) {
     '/admin', '/admin/projects', '/admin/projects/create', '/admin/services', '/admin/services/create',
     '/admin/categories', '/admin/technologies', '/admin/testimonials', '/admin/faqs', '/admin/experiences',
     '/admin/pages', '/admin/contact-submissions', '/admin/manage-identity', '/admin/manage-contact',
-    '/admin/manage-design', '/admin/manage-seo', '/admin/manage-spam',
+    '/admin/manage-career', '/admin/manage-design', '/admin/manage-seo', '/admin/manage-spam',
 ]);
 
 it('shows placeholder settings on the dashboard launch checklist', function () {

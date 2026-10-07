@@ -136,3 +136,16 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 
 ### D-036 · Font loading tuned with measurements
 - **Why:** see docs/lighthouse.md. Arabic fonts are subset to the Arabic blocks (presentation forms aren't needed for browser shaping), Plex 500 was dropped (500 falls back to 400), Geist Mono is `optional` (small labels never shift layout).
+
+### D-037 · Hero: short headline + WebGL "platform stack" driven by scroll
+- **Why:** the request was a simpler title, 3D and scroll animation. The model (database → Laravel core → Filament admin → interface) explains what Omar builds; on tall desktop screens the hero pins and scrolling pulls the layers apart, with labels attached to the projected plates. Raw WebGL2 instead of three.js keeps it at ~5 KB gzipped; it loads after `load` + idle so the H1 stays the LCP element, renders only while something moves, and follows the theme/accent tokens.
+- **Software rendering:** headless Chrome (Lighthouse/PageSpeed), VMs and blocklisted GPUs rasterise WebGL in software and read every frame back on the main thread (~115 ms per frame under mobile throttling, TBT 15 s in the first measurement). Those renderers get a CSS-3D version of the stack instead, so audits measure TBT ≈ 0 while GPU devices get WebGL. Reduced motion: static exploded model, no pinning.
+- **Change:** `resources/js/hero-scene.js`, `pin` custom variant + `.hero-*` styles in `app.css`, `Profile::heroHeadlineHtml()`, settings migration `2026_10_07_120000_simplify_hero_copy` (only replaces untouched defaults).
+
+### D-038 · The site addresses clients and employers; CV is managed in the admin
+- **Why:** Omar is open to client projects and to full-time/contract roles. Copy, meta, the hero, a "Two ways to work together" section, the CTA band and the contact form ("Job or contract role", no budget asked) speak to both. `CareerSettings` holds the *open to roles* switch, the hiring note and the CV files (public disk, deleted when replaced); `/{locale}/cv` serves them with a readable file name and `noindex`. Nothing CV-related renders until a CV is uploaded, so there is never a dead button.
+- **Change:** `App\Settings\CareerSettings`, `ManageCareer`, `CvController`, `ContactForm::isRoleInquiry()`, settings migration `2026_10_07_150000_add_career_and_brand_settings`.
+
+### D-039 · Logo is an upload, favicons are generated from it
+- **Why:** the new OK monogram should replace the built-in mark without a deploy, and future changes should not need one either. Logos are raster uploads only (no SVG: an uploaded SVG served from the site's origin could carry script). Without a dark variant, the logo uses `mix-blend-mode` so a white background disappears and `invert + hue-rotate(180°)` in dark mode (black becomes white, gold stays gold-ish). Saving the Design settings prunes old files and regenerates 32/192 px favicons and the 180 px touch icon with GD.
+- **Change:** `App\Support\Design\Brand`, `ManageDesign`, `<x-wordmark>`, layout favicons, Filament `brandLogo()`.

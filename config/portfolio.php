@@ -25,8 +25,10 @@ return [
     ],
 
     'contact' => [
-        'project_types' => ['laravel-app', 'saas', 'ecommerce', 'admin-panel', 'api', 'audit', 'other'],
-        'budget_ranges' => ['under-3k', '3k-7.5k', '7.5k-15k', '15k-30k', '30k-plus', 'not-sure'],
+        'project_types' => ['laravel-app', 'saas', 'ecommerce', 'admin-panel', 'api', 'audit', 'job-role', 'other'],
+        'budget_ranges' => ['under-3k', '3k-7.5k', '7.5k-15k', '15k-30k', '30k-plus', 'not-sure', 'not-applicable'],
+        // Inquiry type that is about employment rather than a project: no budget is asked.
+        'role_type' => 'job-role',
         'min_seconds' => 3,
         'max_minutes' => 120,
         'rate_limits' => [

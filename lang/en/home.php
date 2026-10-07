@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'meta_title' => 'Omar Khaled — Laravel & Filament Developer for Global Teams',
-    'meta_description' => 'Omar Khaled is a full-stack Laravel and Filament developer in Egypt building e-commerce platforms, B2B portals, SaaS products and admin systems for companies worldwide.',
+    'meta_title' => 'Omar Khaled — Laravel & Filament Developer for Projects and Teams',
+    'meta_description' => 'Omar Khaled is a full-stack Laravel and Filament developer in Egypt building e-commerce platforms, B2B portals, SaaS products and admin systems — available for client projects and for full-time, contract or remote roles.',
     'hero_slug' => 'Laravel & Filament developer · Egypt → worldwide',
     'spec' => [
         'title' => 'At a glance',
@@ -21,6 +21,31 @@ return [
             ['Filament admin', 'Back-office'],
             ['Laravel core', 'APIs · queues · tests'],
             ['Database', 'MySQL · data model'],
+        ],
+    ],
+    'audiences' => [
+        'slug' => 'Work with me',
+        'title' => 'Two ways to work together',
+        'lede' => 'Whether you need a project delivered or a developer on your team, you get the same standard: clean Laravel code, an admin panel people can use, and tests.',
+        'clients' => [
+            'eyebrow' => 'For clients',
+            'title' => 'Hire me for a project',
+            'body' => 'Startups, agencies and companies that need a platform, portal or admin system built — or an existing Laravel app fixed and extended.',
+            'points' => [
+                'Fixed-scope projects or ongoing work',
+                'From discovery to deployment, with handover docs',
+                'A Filament admin panel your team can actually use',
+            ],
+        ],
+        'employers' => [
+            'eyebrow' => 'For companies hiring',
+            'title' => 'Hire me for your team',
+            'body' => 'Teams looking for a full-stack Laravel developer for a full-time, contract or remote role.',
+            'points' => [
+                'Laravel, Filament, Livewire, MySQL and REST APIs',
+                'Works in English and Arabic',
+                'Based in :location (:offset), with working hours that overlap Europe and the Gulf',
+            ],
         ],
     ],
     'stack' => [
@@ -58,8 +83,8 @@ return [
     ],
     'cta' => [
         'slug' => 'Next step',
-        'title' => 'Have a platform to build or a system to untangle?',
-        'body' => 'Tell me what you need in a few lines. You’ll get a reply within :hours hours with next steps — no sales script.',
+        'title' => 'A platform to build — or a role to fill?',
+        'body' => 'Tell me about your project or your team in a few lines. You’ll get a reply within :hours hours with next steps — no sales script.',
         'email' => 'Or email',
     ],
 ];
