@@ -57,7 +57,7 @@ class ManageIdentity extends SettingsPage
                 Bilingual::text('availability_note', 'Availability note'),
             ]),
             Section::make('Portrait (About page)')
-                ->description('A photo of you on a dark background works best (face lit, background black). The photo itself stays private: the About page only receives a small grayscale light map and draws it with words. Remove it to hide the section.')
+                ->description('Shown on the About page and used as your photo in search results (JSON-LD). A square or portrait crop of at least 1200 px works best. The upload stays private; on save the site publishes compressed AVIF/WebP copies (photo metadata such as GPS is not copied). Remove it to hide the section.')
                 ->schema([
                     FileUpload::make('portrait')
                         ->label('Portrait photo')
@@ -66,7 +66,7 @@ class ManageIdentity extends SettingsPage
                         ->visibility('private')
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                        ->maxSize(8192),
+                        ->maxSize(10240),
                 ]),
             Section::make('Home hero')->schema([
                 Bilingual::textarea('hero_headline', 'Headline (H1)', required: true, rows: 2, max: 140, hint: 'Keep it short. Wrap words in *asterisks* to show them in the accent colour.'),

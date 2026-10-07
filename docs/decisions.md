@@ -158,3 +158,8 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-041 · Uploaded logos are optimised on save
 - **Why:** the first real logo upload was a 617 KB PNG, uploaded twice (light and dark): 1.2 MB in the header cost ~6 s of mobile LCP (Lighthouse 75). Saving Design settings now trims the margin (transparent or white) and writes a 112 px-high WebP (~7 KB) that the site uses instead; a dark logo identical to the light one is ignored so the automatic dark-mode recolouring applies. Back to 99–100.
 - **Change:** `Brand::regenerateIcons()`, `Brand::logo()`.
+
+### D-042 · About portrait is a real photo (supersedes the word portrait of D-040)
+- **Why:** the owner preferred the photo itself over the word effect. The section now follows the site theme (title, role, intro, CTAs) beside the photo in a card; the upload stays private and saving Identity settings publishes AVIF + WebP at 480/800/1200 px (re-encoding drops EXIF/GPS), served with `<picture>`, `srcset`, `loading="lazy"` and fixed dimensions (no CLS). The largest WebP is the `Person.image` in JSON-LD. `word-portrait.js` and the light map were removed.
+- **Note:** the variants are stored as a JSON string setting — spatie/laravel-settings resolves property docblocks and cannot parse array shapes (it took the settings class down during development).
+- **Change:** `App\Support\Design\Portrait`, `pages/about.blade.php`, `SchemaGraph::person()`, settings migration `2026_10_07_200000_portrait_photo_instead_of_word_map`.

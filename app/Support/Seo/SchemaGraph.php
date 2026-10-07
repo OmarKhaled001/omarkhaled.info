@@ -7,6 +7,7 @@ use App\Models\Faq;
 use App\Models\Service;
 use App\Models\Technology;
 use App\Presenters\PublicProject;
+use App\Support\Design\Portrait;
 use App\Support\Html;
 use App\Support\Locales;
 use App\Support\Profile;
@@ -76,6 +77,7 @@ final readonly class SchemaGraph
             'email' => $this->profile->email() ? 'mailto:'.$this->profile->email() : null,
             'address' => ['@type' => 'PostalAddress', 'addressCountry' => $this->profile->countryCode()],
             'knowsAbout' => array_values(array_unique([...$knowsAbout, 'Laravel development', 'Filament admin panels', 'E-commerce', 'SaaS', 'REST APIs'])),
+            'image' => Portrait::image()['src'] ?? null,
             'knowsLanguage' => ['en', 'ar'],
             'sameAs' => $this->profile->sameAs() ?: null,
         ]);

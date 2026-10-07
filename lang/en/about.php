@@ -7,10 +7,7 @@ return [
         'greeting' => 'Hello!',
         'name' => 'I’m :name',
         'body' => 'A full-stack Laravel and Filament developer, available for client projects and for full-time or contract roles. I started as a graphic designer in a print shop — that’s where the eye for detail comes from.',
-        'portrait' => 'Portrait of :name, drawn with words.',
-        // Space-separated words drawn into the portrait; accent words are highlighted.
-        'words' => 'Laravel Filament Livewire PHP MySQL Redis API REST queues jobs events tests Pest Tailwind Alpine Eloquent migrations deploy design print type grid detail craft clean ship build SaaS B2B admin dashboard cache Git Vite code Omar Khaled Egypt pixels layout brand Filament Laravel',
-        'accent' => ['Laravel', 'Filament'],
+        'portrait' => 'Portrait of :name.',
     ],
     'skills' => 'Skills by domain',
     'experience' => 'Experience',

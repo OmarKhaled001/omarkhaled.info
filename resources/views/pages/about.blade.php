@@ -15,27 +15,40 @@
         </div>
     </section>
 
-    {{-- Word portrait: the photo from Admin → Identity, drawn as words (resources/js/word-portrait.js). --}}
-    @if ($portrait = \App\Support\Design\Portrait::map())
-        @php($firstName = \Illuminate\Support\Str::before($profile->name(), ' '))
-        <section class="word-portrait relative overflow-hidden border-b border-border" aria-labelledby="hello-title" data-portrait-section>
-            <div class="container-site relative pt-16 pb-10 sm:pt-24 md:pb-16">
-                <h2 id="hello-title" class="hello-title relative z-10">
-                    <span class="block" data-drift="-1">{{ __('about.hello.greeting') }}</span>
-                    <span class="block" data-drift="1">{{ __('about.hello.name', ['name' => $firstName]) }}</span>
-                </h2>
-                <div class="grid gap-8 md:grid-cols-12 md:items-end">
-                    <div class="relative z-10 md:col-span-5 md:pb-20">
-                        <p class="hello-role mt-8">{{ $profile->jobTitle() }}</p>
-                        <p class="hello-muted mt-8 max-w-sm leading-relaxed">{{ __('about.hello.body') }}</p>
+    {{-- Introduction beside the portrait photo from Admin → Identity (App\Support\Design\Portrait). --}}
+    @if ($photo = \App\Support\Design\Portrait::image())
+        <section class="container-site mt-24" aria-labelledby="hello-title">
+            <div class="grid gap-10 md:grid-cols-12 md:items-center lg:gap-16">
+                <div class="md:col-span-7">
+                    <h2 id="hello-title" class="hello-title">
+                        <span class="block">{{ __('about.hello.greeting') }}</span>
+                        <span class="block">{{ __('about.hello.name', ['name' => \Illuminate\Support\Str::before($profile->name(), ' ')]) }}</span>
+                    </h2>
+                    <p class="hello-role mt-8">{{ $profile->jobTitle() }}</p>
+                    <p class="mt-6 max-w-md leading-relaxed text-muted">{{ __('about.hello.body') }}</p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="{{ route('contact') }}" class="btn-primary">
+                            {{ $profile->heroCtaText() }}
+                            <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
+                        </a>
+                        @if ($cvUrl = $profile->cvUrl())
+                            <a href="{{ $cvUrl }}" class="btn-secondary" download>
+                                <x-lucide-download class="size-4" aria-hidden="true" />
+                                {{ __('site.cta.download_cv') }}
+                            </a>
+                        @endif
                     </div>
-                    <figure class="hello-figure md:col-span-7 md:-mt-24 lg:-mt-40" data-word-portrait
-                        data-src="{{ $portrait['url'] }}" data-words="{{ json_encode(preg_split('/\s+/u', trim(__('about.hello.words'))), JSON_UNESCAPED_UNICODE) }}"
-                        data-accent="{{ json_encode(__('about.hello.accent')) }}"
-                        role="img" aria-label="{{ __('about.hello.portrait', ['name' => $profile->name()]) }}">
-                        <canvas class="mx-auto block aspect-[3/4] w-full max-w-[38rem] md:me-0" aria-hidden="true"></canvas>
-                    </figure>
                 </div>
+                <figure class="md:col-span-5" data-reveal>
+                    <picture>
+                        @foreach ($photo['sources'] as $type => $srcset)
+                            <source type="{{ $type }}" srcset="{{ $srcset }}" sizes="(min-width: 75rem) 28rem, (min-width: 48rem) 40vw, 92vw">
+                        @endforeach
+                        <img src="{{ $photo['src'] }}" width="{{ $photo['width'] }}" height="{{ $photo['height'] }}"
+                            alt="{{ __('about.hello.portrait', ['name' => $profile->name()]) }}" loading="lazy" decoding="async"
+                            class="h-auto w-full rounded-lg border border-border bg-surface object-cover shadow-[var(--shadow)]">
+                    </picture>
+                </figure>
             </div>
         </section>
     @endif

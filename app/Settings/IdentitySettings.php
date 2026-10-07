@@ -43,8 +43,12 @@ class IdentitySettings extends Settings
     /** Original portrait photo on the private "media_private" disk; never served publicly. */
     public ?string $portrait;
 
-    /** Small grayscale light map generated from the portrait (public disk), drawn as words on About. */
-    public ?string $portrait_map;
+    /**
+     * Web versions of the portrait generated on save, as JSON rows of format/width/height/path
+     * (read through App\Support\Design\Portrait; a JSON string because spatie/laravel-settings
+     * cannot cast array-shape docblocks).
+     */
+    public ?string $portrait_images;
 
     public static function group(): string
     {

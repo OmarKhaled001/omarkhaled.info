@@ -8,146 +8,126 @@ use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /**
- * The About page's word portrait. The uploaded photo stays on the private disk; only a small,
- * contrast-stretched grayscale "light map" is published, and the browser turns it into words
- * (resources/js/word-portrait.js).
+ * The portrait photo on the About page. The upload stays on the private disk; saving the Identity
+ * settings publishes resized AVIF + WebP copies (metadata stripped by re-encoding) for a responsive
+ * <picture>, and the largest WebP doubles as the Person image in JSON-LD.
  */
 final class Portrait
 {
     public const string SOURCE_DISK = 'media_private';
 
-    public const string MAP_DISK = 'public';
+    public const string PUBLIC_DISK = 'public';
 
     public const string DIRECTORY = 'portrait';
 
-    /** Map width in pixels: plenty for word placement, tiny to download (~10 KB). */
-    private const int MAP_WIDTH = 180;
+    /** @var list<int> */
+    private const array WIDTHS = [480, 800, 1200];
 
-    private const int ANALYSIS_WIDTH = 360;
-
-    /** @return array{url: string, width: int, height: int}|null */
-    public static function map(): ?array
+    /**
+     * @return array{src: string, width: int, height: int, sources: array<string, string>}|null
+     */
+    public static function image(): ?array
     {
         try {
-            $path = app(IdentitySettings::class)->portrait_map;
+            $images = self::rows(app(IdentitySettings::class)->portrait_images);
         } catch (Throwable) {
             return null;
         }
 
-        $disk = Storage::disk(self::MAP_DISK);
-        if (! $path || ! $disk->exists($path) || ! ($size = @getimagesize($disk->path($path)))) {
+        $disk = Storage::disk(self::PUBLIC_DISK);
+        $images = array_values(array_filter($images, fn (array $i): bool => $disk->exists($i['path'])));
+        $webp = array_values(array_filter($images, fn (array $i): bool => $i['format'] === 'webp'));
+        if ($webp === []) {
             return null;
         }
 
-        return ['url' => asset('storage/'.$path), 'width' => $size[0], 'height' => $size[1]];
+        usort($webp, fn (array $a, array $b): int => $a['width'] <=> $b['width']);
+        $largest = $webp[array_key_last($webp)];
+        $sources = [];
+        foreach (['avif', 'webp'] as $format) {
+            $set = array_filter($images, fn (array $i): bool => $i['format'] === $format);
+            if ($set !== []) {
+                $sources["image/{$format}"] = implode(', ', array_map(fn (array $i): string => asset('storage/'.$i['path']).' '.$i['width'].'w', $set));
+            }
+        }
+
+        return ['src' => asset('storage/'.$largest['path']), 'width' => $largest['width'], 'height' => $largest['height'], 'sources' => $sources];
     }
 
-    /** Rebuilds the light map from the uploaded photo and stores its path (null when no photo). */
+    /** Rebuilds the web copies from the uploaded photo (called after the Identity settings are saved). */
     public static function regenerate(): void
     {
         $settings = app(IdentitySettings::class);
         $source = $settings->portrait;
-        $map = null;
+        $images = [];
 
         if ($source && Storage::disk(self::SOURCE_DISK)->exists($source)
-            && ($image = @imagecreatefromstring((string) Storage::disk(self::SOURCE_DISK)->get($source)))) {
-            $png = self::lightMap($image);
-            $map = self::DIRECTORY.'/map-'.substr(sha1($png), 0, 12).'.png';
-            Storage::disk(self::MAP_DISK)->put($map, $png);
+            && ($photo = @imagecreatefromstring((string) Storage::disk(self::SOURCE_DISK)->get($source)))) {
+            $images = self::publish($photo, substr(sha1((string) Storage::disk(self::SOURCE_DISK)->get($source)), 0, 12));
         }
 
-        if ($settings->portrait_map !== $map) {
-            $settings->portrait_map = $map;
+        $json = $images === [] ? null : (string) json_encode($images, JSON_UNESCAPED_SLASHES);
+        if ($settings->portrait_images !== $json) {
+            $settings->portrait_images = $json;
             $settings->save();
         }
 
-        self::prune($source, $map);
+        self::prune($source, array_column($images, 'path'));
     }
 
-    /** Deletes photos and maps that the settings no longer reference. */
-    private static function prune(?string $source, ?string $map): void
+    /** @return list<array{format: string, width: int, height: int, path: string}> */
+    private static function rows(?string $json): array
     {
-        foreach ([[self::SOURCE_DISK, $source], [self::MAP_DISK, $map]] as [$disk, $keep]) {
-            foreach (Storage::disk($disk)->files(self::DIRECTORY) as $file) {
-                if ($file !== $keep) {
-                    Storage::disk($disk)->delete($file);
+        $rows = json_decode((string) $json, true);
+
+        return is_array($rows) ? array_values(array_filter($rows, fn ($r): bool => is_array($r)
+            && is_string($r['format'] ?? null) && is_string($r['path'] ?? null) && is_int($r['width'] ?? null) && is_int($r['height'] ?? null))) : [];
+    }
+
+    /** @return list<array{format: string, width: int, height: int, path: string}> */
+    private static function publish(GdImage $photo, string $hash): array
+    {
+        imagesavealpha($photo, true);
+        $images = [];
+        $widths = array_values(array_unique(array_map(fn (int $w): int => min($w, imagesx($photo)), self::WIDTHS)));
+
+        foreach ($widths as $width) {
+            $height = max(1, (int) round(imagesy($photo) * $width / imagesx($photo)));
+            $resized = imagescale($photo, $width, $height, IMG_BICUBIC) ?: $photo;
+
+            foreach (['avif', 'webp'] as $format) {
+                if ($format === 'avif' && ! function_exists('imageavif')) {
+                    continue;
                 }
+
+                ob_start();
+                $format === 'avif' ? imageavif($resized, null, 55, 6) : imagewebp($resized, null, 82);
+                $path = self::DIRECTORY."/photo-{$hash}-{$width}.{$format}";
+                Storage::disk(self::PUBLIC_DISK)->put($path, (string) ob_get_clean());
+                $images[] = ['format' => $format, 'width' => $width, 'height' => $height, 'path' => $path];
             }
         }
+
+        return $images;
     }
 
     /**
-     * Grayscale, levels stretched to the 2nd–99.5th percentile, mid-tones darkened, then cropped to
-     * the lit area (the face) at a 3:4 ratio so the words draw a face rather than a dark frame.
-     */
-    public static function lightMap(GdImage $image): string
-    {
-        // Analyse at twice the output size so the crop keeps enough detail.
-        $height = max(1, (int) round(imagesy($image) * self::ANALYSIS_WIDTH / imagesx($image)));
-        $small = imagescale($image, self::ANALYSIS_WIDTH, $height, IMG_BICUBIC) ?: $image;
-        $w = imagesx($small);
-        $h = imagesy($small);
-
-        $lum = [];
-        for ($y = 0; $y < $h; $y++) {
-            for ($x = 0; $x < $w; $x++) {
-                $rgb = imagecolorat($small, $x, $y);
-                $lum[] = 0.2126 * (($rgb >> 16) & 0xFF) + 0.7152 * (($rgb >> 8) & 0xFF) + 0.0722 * ($rgb & 0xFF);
-            }
-        }
-
-        $sorted = $lum;
-        sort($sorted);
-        $low = $sorted[(int) floor(count($sorted) * 0.02)];
-        $high = max($low + 1, $sorted[(int) floor((count($sorted) - 1) * 0.995)]);
-
-        $levels = imagecreatetruecolor($w, $h);
-        [$minX, $minY, $maxX, $maxY] = [$w, $h, 0, 0];
-        foreach ($lum as $i => $value) {
-            $v = min(1, max(0, ($value - $low) / ($high - $low))) ** 1.35;
-            [$x, $y] = [$i % $w, intdiv($i, $w)];
-            $g = (int) round($v * 255);
-            imagesetpixel($levels, $x, $y, ($g << 16) | ($g << 8) | $g);
-            if ($v > 0.3) {
-                [$minX, $minY, $maxX, $maxY] = [min($minX, $x), min($minY, $y), max($maxX, $x), max($maxY, $y)];
-            }
-        }
-
-        $crop = $maxX > $minX && $maxY > $minY ? self::frame($minX, $minY, $maxX, $maxY, $w, $h) : ['x' => 0, 'y' => 0, 'width' => $w, 'height' => $h];
-        $cropped = imagecrop($levels, $crop) ?: $levels;
-        $outW = min(self::MAP_WIDTH, imagesx($cropped));
-        $outH = max(1, (int) round(imagesy($cropped) * $outW / imagesx($cropped)));
-        $final = imagescale($cropped, $outW, $outH, IMG_BICUBIC) ?: $cropped;
-        imagefilter($final, IMG_FILTER_GRAYSCALE);
-        imagetruecolortopalette($final, false, 256);
-
-        ob_start();
-        imagepng($final, null, 9);
-
-        return (string) ob_get_clean();
-    }
-
-    /**
-     * The lit bounding box, padded and grown to 3:4 around its centre, clamped to the image.
+     * Deletes uploads and published copies the settings no longer reference.
      *
-     * @return array{x: int, y: int, width: int, height: int}
+     * @param  list<string>  $published
      */
-    private static function frame(int $minX, int $minY, int $maxX, int $maxY, int $w, int $h): array
+    private static function prune(?string $source, array $published): void
     {
-        $bw = ($maxX - $minX) * 1.12;
-        $bh = ($maxY - $minY) * 1.06;
-        if ($bw / $bh > 0.75) {
-            $bh = $bw / 0.75;
-        } else {
-            $bw = $bh * 0.75;
+        foreach (Storage::disk(self::SOURCE_DISK)->files(self::DIRECTORY) as $file) {
+            if ($file !== $source) {
+                Storage::disk(self::SOURCE_DISK)->delete($file);
+            }
         }
-        $bw = min($bw, $w);
-        $bh = min($bh, $h);
-        $cx = ($minX + $maxX) / 2;
-        $cy = ($minY + $maxY) / 2;
-        $x = (int) round(min(max(0, $cx - $bw / 2), $w - $bw));
-        $y = (int) round(min(max(0, $cy - $bh / 2), $h - $bh));
 
-        return ['x' => $x, 'y' => $y, 'width' => (int) round($bw), 'height' => (int) round($bh)];
+        foreach (Storage::disk(self::PUBLIC_DISK)->files(self::DIRECTORY) as $file) {
+            if (! in_array($file, $published, true)) {
+                Storage::disk(self::PUBLIC_DISK)->delete($file);
+            }
+        }
     }
 }
