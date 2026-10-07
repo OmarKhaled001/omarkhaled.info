@@ -55,7 +55,7 @@ class ManageIdentity extends SettingsPage
                 Bilingual::text('availability_note', 'Availability note'),
             ]),
             Section::make('Home hero')->schema([
-                Bilingual::textarea('hero_headline', 'Headline (H1)', required: true, rows: 2, max: 140),
+                Bilingual::textarea('hero_headline', 'Headline (H1)', required: true, rows: 2, max: 140, hint: 'Keep it short. Wrap words in *asterisks* to show them in the accent colour.'),
                 Bilingual::textarea('hero_subheadline', 'Supporting line', required: true, rows: 3, max: 400),
                 Bilingual::text('hero_cta_text', 'Primary button', required: true, max: 40),
             ]),

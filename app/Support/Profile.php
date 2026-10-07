@@ -6,6 +6,7 @@ use App\Settings\ContactSettings;
 use App\Settings\IdentitySettings;
 use DateTimeZone;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 
 /**
  * The only public gateway to identity and contact data. Every value that still holds a
@@ -89,9 +90,26 @@ final class Profile
         return $this->identity->years_experience ?: null;
     }
 
+    /** Plain text: the *accent* markers are stripped (meta, structured data, tests). */
     public function heroHeadline(?string $locale = null): ?string
     {
-        return $this->translated($this->identity->hero_headline, $locale);
+        $headline = $this->translated($this->identity->hero_headline, $locale);
+
+        return $headline === null ? null : str_replace('*', '', $headline);
+    }
+
+    /** Escaped headline with *marked words* wrapped in an accent span, for the hero H1. */
+    public function heroHeadlineHtml(?string $locale = null): ?HtmlString
+    {
+        $headline = $this->translated($this->identity->hero_headline, $locale);
+
+        if ($headline === null) {
+            return null;
+        }
+
+        $html = preg_replace('/\*([^*]+)\*/u', '<span class="text-accent-text">$1</span>', e($headline));
+
+        return new HtmlString(str_replace('*', '', (string) $html));
     }
 
     public function heroSubheadline(?string $locale = null): ?string

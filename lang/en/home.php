@@ -5,14 +5,23 @@ return [
     'meta_description' => 'Omar Khaled is a full-stack Laravel and Filament developer in Egypt building e-commerce platforms, B2B portals, SaaS products and admin systems for companies worldwide.',
     'hero_slug' => 'Laravel & Filament developer · Egypt → worldwide',
     'spec' => [
-        'title' => 'Job ticket',
+        'title' => 'At a glance',
         'stack' => 'Stack',
         'stack_value' => 'Laravel · Filament · Livewire',
         'based' => 'Based in',
-        'languages' => 'Works in',
-        'languages_value' => 'English · Arabic',
         'replies' => 'Replies',
         'replies_value' => 'within :hours hours',
+    ],
+    'scene' => [
+        'label' => 'A 3D model of a Laravel platform as four stacked layers: the interface, the Filament admin panel, the Laravel core and the database.',
+        'scroll' => 'Scroll',
+        // Top to bottom, as drawn in the 3D stack.
+        'layers' => [
+            ['Interface', 'Storefronts · portals'],
+            ['Filament admin', 'Back-office'],
+            ['Laravel core', 'APIs · queues · tests'],
+            ['Database', 'MySQL · data model'],
+        ],
     ],
     'stack' => [
         'slug' => 'Stack',

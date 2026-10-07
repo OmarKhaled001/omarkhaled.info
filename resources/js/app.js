@@ -89,6 +89,23 @@ function initReveal() {
     items.forEach((el) => observer.observe(el));
 }
 
+// The WebGL hero is a separate chunk, fetched only on the home page and only after load + idle,
+// so it never competes with the headline (LCP) or adds blocking time.
+function initHeroScene() {
+    const figure = document.querySelector('[data-hero-scene]');
+    if (!figure) return;
+
+    const start = () =>
+        import('./hero-scene.js')
+            .then(({ mount }) => mount(figure))
+            .catch(() => figure.classList.add('is-static'));
+    const whenIdle = () => ('requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 2000 }) : setTimeout(start, 300));
+
+    if (document.readyState === 'complete') whenIdle();
+    else window.addEventListener('load', whenIdle, { once: true });
+}
+
 initThemeToggle();
 initMenu();
 initReveal();
+initHeroScene();

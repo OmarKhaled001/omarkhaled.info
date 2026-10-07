@@ -1,47 +1,73 @@
 <x-layouts.site :seo="$seo">
-    {{-- Hero: text-only so the LCP element is a heading, not an image. --}}
-    <section class="relative overflow-hidden border-b border-border" aria-labelledby="hero-title">
-        <div class="bg-blueprint pointer-events-none absolute inset-0" aria-hidden="true"></div>
-        <div class="container-site relative grid gap-12 pt-16 pb-20 sm:pt-24 md:grid-cols-12 md:items-end lg:pb-28">
-            <div class="md:col-span-8">
-                <p class="slug flex items-center gap-2">
-                    @if ($profile->availabilityStatus() === 'available' && $profile->availabilityNote())
-                        <span class="relative inline-flex size-2" aria-hidden="true">
-                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden"></span>
-                            <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
-                        </span>
-                        <span>{{ $profile->availabilityNote() }} · </span>
+    {{--
+        Hero: short headline (the LCP element) beside a WebGL "platform stack" (resources/js/hero-scene.js).
+        On tall-enough desktop screens the hero pins while scrolling pulls the four layers apart.
+    --}}
+    <section class="relative border-b border-border pin:h-[175svh]" data-hero aria-labelledby="hero-title">
+        <div class="relative overflow-hidden pin:sticky pin:top-16 pin:h-[calc(100svh-4rem)]" data-hero-pin>
+            <div class="bg-blueprint pointer-events-none absolute inset-0" aria-hidden="true"></div>
+            <div class="container-site relative grid items-center gap-8 pt-14 pb-16 sm:pt-20 md:grid-cols-12 md:gap-6 pin:h-full pin:py-10">
+                <div class="md:col-span-7 lg:col-span-6">
+                    <p class="slug flex flex-wrap items-center gap-x-2 gap-y-1">
+                        @if ($profile->availabilityStatus() === 'available' && $profile->availabilityNote())
+                            <span class="flex items-center gap-2 text-accent-text">
+                                <span class="relative inline-flex size-2" aria-hidden="true">
+                                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden"></span>
+                                    <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
+                                </span>
+                                {{ $profile->availabilityNote() }}
+                            </span>
+                            <span aria-hidden="true">·</span>
+                        @endif
+                        <span>{{ __('home.hero_slug') }}</span>
+                    </p>
+                    <h1 id="hero-title" class="mt-6 text-display font-semibold tracking-display text-balance">
+                        {{ $profile->heroHeadlineHtml() ?? __('home.meta_title') }}
+                    </h1>
+                    @if ($profile->heroSubheadline())
+                        <p class="mt-6 max-w-xl text-lede text-muted text-pretty">{{ $profile->heroSubheadline() }}</p>
                     @endif
-                    <span>{{ __('home.hero_slug') }}</span>
-                </p>
-                <h1 id="hero-title" class="mt-6 text-display font-semibold tracking-display text-balance">
-                    {{ $profile->heroHeadline() ?? __('home.meta_title') }}
-                </h1>
-                @if ($profile->heroSubheadline())
-                    <p class="mt-7 max-w-2xl text-lede text-muted text-pretty">{{ $profile->heroSubheadline() }}</p>
-                @endif
-                <div class="mt-10 flex flex-wrap gap-3">
-                    <a href="{{ route('contact') }}" class="btn-primary">
-                        {{ $profile->heroCtaText() }}
-                        <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
-                    </a>
-                    <a href="{{ route('projects.index') }}" class="btn-secondary">{{ __('site.cta.see_work') }}</a>
+                    <div class="mt-9 flex flex-wrap gap-3">
+                        <a href="{{ route('contact') }}" class="btn-primary">
+                            {{ $profile->heroCtaText() }}
+                            <x-lucide-arrow-right class="icon-dir size-4" aria-hidden="true" />
+                        </a>
+                        <a href="{{ route('projects.index') }}" class="btn-secondary">{{ __('site.cta.see_work') }}</a>
+                    </div>
+
+                    <dl class="mt-10 grid max-w-xl grid-cols-2 gap-x-6 gap-y-4 border-t border-dashed border-border pt-6 text-[0.85rem] sm:grid-cols-3" aria-label="{{ __('home.spec.title') }}">
+                        <div><dt class="slug">{{ __('home.spec.stack') }}</dt><dd class="mt-1 font-medium">{{ __('home.spec.stack_value') }}</dd></div>
+                        <div><dt class="slug">{{ __('home.spec.based') }}</dt><dd class="mt-1 font-medium">{{ $profile->location() }} · {{ $profile->utcOffsetLabel() }}</dd></div>
+                        <div><dt class="slug">{{ __('home.spec.replies') }}</dt><dd class="mt-1 font-medium">{{ __('home.spec.replies_value', ['hours' => $profile->responseTimeHours()]) }}</dd></div>
+                    </dl>
                 </div>
+
+                {{-- Decorative 3D model; labels are positioned by the scene script from projected plate corners. --}}
+                <figure class="hero-scene md:col-span-5 lg:col-span-6" data-hero-scene role="img" aria-label="{{ __('home.scene.label') }}">
+                    <div class="hero-stage relative mx-auto aspect-square w-full max-w-[36rem] md:aspect-auto md:h-[clamp(20rem,calc(100svh-10rem),36rem)]">
+                        <div class="hero-glow pointer-events-none absolute inset-[14%] rounded-full" aria-hidden="true"></div>
+                        <canvas class="absolute inset-0 size-full" aria-hidden="true"></canvas>
+                        {{-- CSS-only stack, shown when WebGL is missing or software-rendered. --}}
+                        <div class="hero-css" aria-hidden="true">
+                            @foreach (range(0, 3) as $layer)
+                                <div class="hero-css-plate" data-layer="{{ $layer }}"></div>
+                            @endforeach
+                        </div>
+                        <ol class="hero-labels" aria-hidden="true">
+                            @foreach (__('home.scene.layers') as $i => [$name, $detail])
+                                <li class="hero-label" data-layer="{{ 3 - $i }}">
+                                    <span class="block font-medium">{{ $name }}</span>
+                                    <span class="hero-label-detail">{{ $detail }}</span>
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                </figure>
             </div>
 
-            {{-- "Job ticket": the print-shop docket, holding the facts a buyer scans first. --}}
-            <aside class="md:col-span-4" aria-label="{{ __('home.spec.title') }}">
-                <dl class="card relative divide-y divide-dashed divide-border font-mono text-[0.8rem]">
-                    <div class="flex items-center justify-between px-5 py-3">
-                        <dt class="slug">{{ __('home.spec.title') }}</dt>
-                        <dd class="text-accent-text">OK/{{ now()->format('y') }}</dd>
-                    </div>
-                    <div class="flex justify-between gap-4 px-5 py-3"><dt class="text-muted">{{ __('home.spec.stack') }}</dt><dd class="text-end">{{ __('home.spec.stack_value') }}</dd></div>
-                    <div class="flex justify-between gap-4 px-5 py-3"><dt class="text-muted">{{ __('home.spec.based') }}</dt><dd class="text-end">{{ $profile->location() }} · {{ $profile->utcOffsetLabel() }}</dd></div>
-                    <div class="flex justify-between gap-4 px-5 py-3"><dt class="text-muted">{{ __('home.spec.languages') }}</dt><dd class="text-end">{{ __('home.spec.languages_value') }}</dd></div>
-                    <div class="flex justify-between gap-4 px-5 py-3"><dt class="text-muted">{{ __('home.spec.replies') }}</dt><dd class="text-end">{{ __('home.spec.replies_value', ['hours' => $profile->responseTimeHours()]) }}</dd></div>
-                </dl>
-            </aside>
+            <div class="pointer-events-none absolute inset-x-0 bottom-5 hidden justify-center pin:flex" data-hero-cue aria-hidden="true">
+                <span class="slug flex items-center gap-2">{{ __('home.scene.scroll') }} <x-lucide-arrow-down class="size-3.5 motion-safe:animate-bounce" /></span>
+            </div>
         </div>
     </section>
 

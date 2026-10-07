@@ -2,6 +2,7 @@
 
 use App\Settings\ContactSettings;
 use App\Settings\DesignSettings;
+use App\Settings\IdentitySettings;
 use App\Support\Launch\LaunchChecklist;
 use App\Support\Profile;
 
@@ -49,4 +50,18 @@ it('renders the accent colour from Site Settings as CSS tokens', function () {
     $design->save();
 
     $this->get('/en')->assertSee('--accent:#1D4ED8', false);
+});
+
+it('renders *marked* headline words in the accent colour and escapes the rest', function () {
+    $identity = app(IdentitySettings::class);
+    $identity->hero_headline = ['en' => 'Apps <b>that</b> *just work*.', 'ar' => 'منصّات *تعمل بثبات*.'];
+    $identity->save();
+    app()->forgetScopedInstances();
+    $profile = app(Profile::class);
+
+    expect($profile->heroHeadline('en'))->toBe('Apps <b>that</b> just work.')
+        ->and((string) $profile->heroHeadlineHtml('en'))->toBe('Apps &lt;b&gt;that&lt;/b&gt; <span class="text-accent-text">just work</span>.')
+        ->and((string) $profile->heroHeadlineHtml('ar'))->toBe('منصّات <span class="text-accent-text">تعمل بثبات</span>.');
+
+    $this->get('/en')->assertSee('<span class="text-accent-text">just work</span>', false);
 });

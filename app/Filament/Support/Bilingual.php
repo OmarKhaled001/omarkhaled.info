@@ -44,12 +44,13 @@ final class Bilingual
             ->required($required));
     }
 
-    public static function textarea(string $name, string $label, bool $required = false, int $rows = 3, ?int $max = null): Grid
+    public static function textarea(string $name, string $label, bool $required = false, int $rows = 3, ?int $max = null, ?string $hint = null): Grid
     {
         return self::make(fn (string $locale) => Textarea::make("{$name}.{$locale}")
             ->label($label)
             ->rows($rows)
             ->maxLength($max)
+            ->helperText($hint)
             ->required($required));
     }
 

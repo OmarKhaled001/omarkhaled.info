@@ -72,7 +72,7 @@ it('clears the page cache when content changes', function () {
 });
 
 it('clears the page cache when settings change', function () {
-    $this->get('/en')->assertSee('Laravel platforms and back-offices');
+    $this->get('/en')->assertSee('Laravel platforms that');
 
     $identity = app(IdentitySettings::class);
     $identity->hero_headline = ['en' => 'A brand new headline for testing', 'ar' => 'عنوان جديد'];
