@@ -46,7 +46,7 @@
                         @endforeach
                         <img src="{{ $photo['src'] }}" width="{{ $photo['width'] }}" height="{{ $photo['height'] }}"
                             alt="{{ __('about.hello.portrait', ['name' => $profile->name()]) }}" loading="lazy" decoding="async"
-                            class="h-auto w-full rounded-lg border border-border bg-surface object-cover shadow-[var(--shadow)]">
+                            class="photo-feather h-auto w-full">
                     </picture>
                 </figure>
             </div>

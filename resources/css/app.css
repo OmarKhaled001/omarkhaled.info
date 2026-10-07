@@ -563,6 +563,21 @@
     letter-spacing: 0;
 }
 
+/* Feathered portrait: the photo melts into the page on every side (deepest at the bottom,
+   where the shoulders are cut). Three intersected masks: a soft ellipse, plus vertical and
+   horizontal ramps that reach zero exactly at the box edges, so lossy WebP/AVIF alpha noise
+   in the transparent background can never show as a faint frame. */
+.photo-feather {
+    --feather:
+        radial-gradient(ellipse 72% 78% at 50% 40%, #000 55%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 6%, #000 60%, transparent 97%),
+        linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
+    -webkit-mask-image: var(--feather);
+    -webkit-mask-composite: source-in;
+    mask-image: var(--feather);
+    mask-composite: intersect;
+}
+
 /* Directional icons mirror in RTL. */
 [dir='rtl'] .icon-dir {
     transform: scaleX(-1);

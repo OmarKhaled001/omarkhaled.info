@@ -163,3 +163,7 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 - **Why:** the owner preferred the photo itself over the word effect. The section now follows the site theme (title, role, intro, CTAs) beside the photo in a card; the upload stays private and saving Identity settings publishes AVIF + WebP at 480/800/1200 px (re-encoding drops EXIF/GPS), served with `<picture>`, `srcset`, `loading="lazy"` and fixed dimensions (no CLS). The largest WebP is the `Person.image` in JSON-LD. `word-portrait.js` and the light map were removed.
 - **Note:** the variants are stored as a JSON string setting — spatie/laravel-settings resolves property docblocks and cannot parse array shapes (it took the settings class down during development).
 - **Change:** `App\Support\Design\Portrait`, `pages/about.blade.php`, `SchemaGraph::person()`, settings migration `2026_10_07_200000_portrait_photo_instead_of_word_map`.
+
+### D-043 · Feathered portrait edges
+- **Why:** requested: the photo should melt into the page rather than sit in a card. A CSS mask intersects a soft ellipse with vertical and horizontal ramps that reach zero exactly at the image box, deepest at the bottom where the shoulders are cut. Lossy WebP/AVIF encode the transparent background with alpha 1–6/255; the ramps make sure that noise never forms a visible frame (measured: edge pixels equal the page colour in both themes).
+- **Change:** `.photo-feather` in `app.css`, About photo markup.
