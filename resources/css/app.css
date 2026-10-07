@@ -536,6 +536,63 @@
 .hero-scene.is-static .hero-label[data-layer='1'] { top: 57%; }
 .hero-scene.is-static .hero-label[data-layer='0'] { top: 72%; }
 
+/* ---------------------------------------------------------------------------
+   About: word portrait (resources/js/word-portrait.js). Always a dark plate, like the
+   photo it is drawn from, in both themes.
+   --------------------------------------------------------------------------- */
+.word-portrait {
+    --wp-bg: #0A0A0B;
+    --wp-text: #EDEDEF;
+    --wp-muted: #A1A1AA;
+    background: var(--wp-bg);
+    color: var(--wp-text);
+}
+
+.hello-title {
+    font-size: clamp(3.1rem, 0.9rem + 9.6vw, 9.5rem);
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+}
+
+.hello-title [data-drift] {
+    will-change: transform;
+}
+
+:lang(ar) .hello-title {
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: 0;
+}
+
+/* The print "extrusion" under the role, echoing a misregistered second ink. */
+.hello-role {
+    font-size: clamp(1.35rem, 0.95rem + 1.7vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-shadow: 0 0.13em 0 #55555D;
+}
+
+:lang(ar) .hello-role {
+    letter-spacing: 0;
+}
+
+.hello-muted {
+    color: var(--wp-muted);
+}
+
+.hello-figure canvas {
+    opacity: 0;
+    transition: opacity 600ms var(--ease-out-soft);
+}
+
+.hello-figure.is-ready canvas {
+    opacity: 1;
+}
+
 /* Directional icons mirror in RTL. */
 [dir='rtl'] .icon-dir {
     transform: scaleX(-1);

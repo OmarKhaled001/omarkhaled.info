@@ -15,6 +15,31 @@
         </div>
     </section>
 
+    {{-- Word portrait: the photo from Admin → Identity, drawn as words (resources/js/word-portrait.js). --}}
+    @if ($portrait = \App\Support\Design\Portrait::map())
+        @php($firstName = \Illuminate\Support\Str::before($profile->name(), ' '))
+        <section class="word-portrait relative overflow-hidden border-b border-border" aria-labelledby="hello-title" data-portrait-section>
+            <div class="container-site relative pt-16 pb-10 sm:pt-24 md:pb-16">
+                <h2 id="hello-title" class="hello-title relative z-10">
+                    <span class="block" data-drift="-1">{{ __('about.hello.greeting') }}</span>
+                    <span class="block" data-drift="1">{{ __('about.hello.name', ['name' => $firstName]) }}</span>
+                </h2>
+                <div class="grid gap-8 md:grid-cols-12 md:items-end">
+                    <div class="relative z-10 md:col-span-5 md:pb-20">
+                        <p class="hello-role mt-8">{{ $profile->jobTitle() }}</p>
+                        <p class="hello-muted mt-8 max-w-sm leading-relaxed">{{ __('about.hello.body') }}</p>
+                    </div>
+                    <figure class="hello-figure md:col-span-7 md:-mt-24 lg:-mt-40" data-word-portrait
+                        data-src="{{ $portrait['url'] }}" data-words="{{ json_encode(preg_split('/\s+/u', trim(__('about.hello.words'))), JSON_UNESCAPED_UNICODE) }}"
+                        data-accent="{{ json_encode(__('about.hello.accent')) }}"
+                        role="img" aria-label="{{ __('about.hello.portrait', ['name' => $profile->name()]) }}">
+                        <canvas class="mx-auto block aspect-[3/4] w-full max-w-[38rem] md:me-0" aria-hidden="true"></canvas>
+                    </figure>
+                </div>
+            </div>
+        </section>
+    @endif
+
     <section class="container-site mt-24" aria-labelledby="design-title">
         <p class="slug"><span class="text-accent-text">01</span> — Design</p>
         <h2 id="design-title" class="mt-3 max-w-3xl text-h2 font-semibold tracking-display text-balance">{{ __('about.design.title') }}</h2>

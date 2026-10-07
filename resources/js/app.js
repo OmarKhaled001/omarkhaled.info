@@ -105,7 +105,29 @@ function initHeroScene() {
     else window.addEventListener('load', whenIdle, { once: true });
 }
 
+// About page word portrait: fetched once the section approaches the viewport (after load).
+function initWordPortrait() {
+    const figure = document.querySelector('[data-word-portrait]');
+    if (!figure || !('IntersectionObserver' in window)) return;
+
+    const observe = () => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) return;
+                observer.disconnect();
+                import('./word-portrait.js').then(({ mount }) => mount(figure)).catch(() => {});
+            },
+            { rootMargin: '300px 0px' },
+        );
+        observer.observe(figure);
+    };
+
+    if (document.readyState === 'complete') observe();
+    else window.addEventListener('load', observe, { once: true });
+}
+
 initThemeToggle();
 initMenu();
 initReveal();
 initHeroScene();
+initWordPortrait();

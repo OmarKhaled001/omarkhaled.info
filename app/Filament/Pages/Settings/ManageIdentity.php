@@ -4,7 +4,9 @@ namespace App\Filament\Pages\Settings;
 
 use App\Filament\Support\Bilingual;
 use App\Settings\IdentitySettings;
+use App\Support\Design\Portrait;
 use BackedEnum;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
@@ -54,11 +56,28 @@ class ManageIdentity extends SettingsPage
                 ]),
                 Bilingual::text('availability_note', 'Availability note'),
             ]),
+            Section::make('Portrait (About page)')
+                ->description('A photo of you on a dark background works best (face lit, background black). The photo itself stays private: the About page only receives a small grayscale light map and draws it with words. Remove it to hide the section.')
+                ->schema([
+                    FileUpload::make('portrait')
+                        ->label('Portrait photo')
+                        ->disk(Portrait::SOURCE_DISK)
+                        ->directory(Portrait::DIRECTORY)
+                        ->visibility('private')
+                        ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                        ->maxSize(8192),
+                ]),
             Section::make('Home hero')->schema([
                 Bilingual::textarea('hero_headline', 'Headline (H1)', required: true, rows: 2, max: 140, hint: 'Keep it short. Wrap words in *asterisks* to show them in the accent colour.'),
                 Bilingual::textarea('hero_subheadline', 'Supporting line', required: true, rows: 3, max: 400),
                 Bilingual::text('hero_cta_text', 'Primary button', required: true, max: 40),
             ]),
         ]);
+    }
+
+    protected function afterSave(): void
+    {
+        Portrait::regenerate();
     }
 }

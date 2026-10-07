@@ -97,10 +97,28 @@ it('uses the uploaded logo in the header and generates favicons from it', functi
     expect(Storage::disk('public')->exists('brand/icons/favicon-32.png'))->toBeTrue()
         ->and(getimagesizefromstring((string) Storage::disk('public')->get('brand/icons/apple-touch-icon.png'))[0])->toBe(180);
 
+    // The page gets a small trimmed WebP, never the heavy upload.
+    expect(Brand::logo())->toMatchArray(['width' => 128, 'height' => 112])
+        ->and(Brand::logo()['url'])->toEndWith('brand/icons/logo-light.webp');
+
     $this->get('/en')->assertOk()
-        ->assertSee('storage/brand/logo.png', false)
+        ->assertSee('storage/brand/icons/logo-light.webp', false)
+        ->assertDontSee('storage/brand/logo.png', false)
         ->assertSee('dark:invert', false)
         ->assertSee('storage/brand/icons/favicon-32.png', false);
+});
+
+it('ignores a dark logo that is the same file as the light one', function () {
+    Storage::disk('public')->put('brand/a.png', pngLogo());
+    Storage::disk('public')->put('brand/b.png', pngLogo());
+    $design = app(DesignSettings::class);
+    $design->logo_light = 'brand/a.png';
+    $design->logo_dark = 'brand/b.png';
+    $design->save();
+    Brand::regenerateIcons();
+
+    expect(Brand::logo('dark'))->toBeNull();
+    $this->get('/en')->assertSee('dark:invert', false);
 });
 
 it('falls back to the built-in mark and default favicons without a logo', function () {

@@ -3,7 +3,7 @@
 _Measured 2026-10-07 with Lighthouse 12.8.2, mobile form factor, default simulated throttling (slow 4G, 4× CPU), headless Chromium._
 _Setup: `APP_DEBUG=false`, full-page cache warm, assets built with `npm run build`, behind a reverse proxy doing Brotli/gzip and long-lived caching for `/build/*` — the same things nginx/Caddy do in production (see `docs/deployment.md`)._
 
-_Home rows re-measured after the 3D hero, CV and logo changes (D-037–D-039). Headless Chromium renders WebGL in software, so audits see the CSS-3D fallback; GPU devices run WebGL lazily after load (see D-037). axe: 0 violations, no overflow at 360 px._
+_Re-measured after the 3D hero, CV, logo and word-portrait changes (D-037–D-041): `/en` and `/ar` 99/100/100/100 (LCP 1.7–1.8 s, TBT 0), `/en/about` and `/ar/about` 99/100/100/100 (LCP 1.7–1.8 s, TBT 0). Headless Chromium renders WebGL in software, so audits see the CSS-3D fallback; GPU devices run WebGL lazily after load (see D-037). axe: 0 violations, no overflow at 360 px._
 
 | Page | Performance | Accessibility | Best practices | SEO | LCP | CLS | TBT | FCP |
 |---|---|---|---|---|---|---|---|---|

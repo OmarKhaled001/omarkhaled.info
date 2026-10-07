@@ -149,3 +149,12 @@ Decisions made autonomously during the build. Each entry: **decision**, **why**,
 ### D-039 · Logo is an upload, favicons are generated from it
 - **Why:** the new OK monogram should replace the built-in mark without a deploy, and future changes should not need one either. Logos are raster uploads only (no SVG: an uploaded SVG served from the site's origin could carry script). Without a dark variant, the logo uses `mix-blend-mode` so a white background disappears and `invert + hue-rotate(180°)` in dark mode (black becomes white, gold stays gold-ish). Saving the Design settings prunes old files and regenerates 32/192 px favicons and the 180 px touch icon with GD.
 - **Change:** `App\Support\Design\Brand`, `ManageDesign`, `<x-wordmark>`, layout favicons, Filament `brandLogo()`.
+
+### D-040 · About page word portrait (photo drawn with moving words)
+- **Why:** requested in the style of a typographic portrait. Only a 180 px grayscale light map, contrast-stretched and cropped to the lit face at 3:4, is published (`storage/portrait/map-*.png`); the original photo stays on the private `media_private` disk. The browser packs words from the site's own vocabulary (EN/AR lists in `lang/*/about.php`) into the light areas, brightest first, and uses the map as an alpha mask so features read pixel by pixel.
+- **Motion:** assembles on first view (layout time-boxed to 6 ms per frame), words keep swapping with a brief flash, a light band sweeps every ~6 s, the pointer is a spotlight, the title lines drift with scroll. The module (~3 KB gz) loads only when the section nears the viewport, pauses off screen, and reduced motion gets the finished still.
+- **Change:** `App\Support\Design\Portrait`, `resources/js/word-portrait.js`, Identity settings (portrait upload), settings migration `2026_10_07_180000_add_portrait_settings`.
+
+### D-041 · Uploaded logos are optimised on save
+- **Why:** the first real logo upload was a 617 KB PNG, uploaded twice (light and dark): 1.2 MB in the header cost ~6 s of mobile LCP (Lighthouse 75). Saving Design settings now trims the margin (transparent or white) and writes a 112 px-high WebP (~7 KB) that the site uses instead; a dark logo identical to the light one is ignored so the automatic dark-mode recolouring applies. Back to 99–100.
+- **Change:** `Brand::regenerateIcons()`, `Brand::logo()`.

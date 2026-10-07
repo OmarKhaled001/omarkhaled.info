@@ -98,10 +98,11 @@ Images are converted to AVIF + WebP in several sizes on the queue (`php artisan 
 - **Inquiries** — contact-form submissions with status (new / read / replied / spam), reply-by-email and CSV export. Spam is deleted after 30 days, other inquiries after 24 months.
 
 ### Site Settings
-- **Identity & hero** — name, title, location, time zone, working hours, availability, response time, years of experience (empty = never stated), hero headline/subline/CTA. Wrap words of the headline in `*asterisks*` to show them in the accent colour.
+- **Identity & hero** — name, title, location, time zone, working hours, availability, response time, years of experience (empty = never stated), hero headline/subline/CTA.
+- **Identity → Portrait** — a photo on a dark background (lit face, black background works best). The photo stays on the private disk; the About page receives only a small grayscale light map cropped to the face and draws it with animated words. Remove it to hide the section. Wrap words of the headline in `*asterisks*` to show them in the accent colour.
 - **Hiring & CV** — the *Open to roles* switch (hiring note in the hero, the "For companies hiring" card, the "Job or contract role" inquiry type) and the CV upload (PDF, EN + optional AR). Visitors download it from `/en/cv` / `/ar/cv` as `omar-khaled-CV-EN.pdf`; the download buttons appear only once a CV is uploaded, and replaced files are deleted.
 - **Contact & social** — email, LinkedIn, GitHub, Upwork, Behance, booking link, WhatsApp. Values that are still placeholders (`contact@example.com`, `…/placeholder`, `+10000000000`) are **never shown publicly** and never reach JSON-LD, the sitemap or `llms.txt`.
-- **Design** — logo (PNG/WebP/JPEG; optional dark-mode variant, otherwise it is recoloured for dark backgrounds) used in the header, footer and admin and to generate the favicons; accent colour, from which all accent tokens are derived to keep WCAG AA contrast in light and dark mode.
+- **Design** — logo (PNG/WebP/JPEG; optional dark-mode variant, otherwise it is recoloured for dark backgrounds) used in the header, footer and admin and to generate the favicons (on save, the upload is trimmed and turned into a ~10 KB WebP for the page, so any size of PNG is fine; a dark variant identical to the light one is ignored); accent colour, from which all accent tokens are derived to keep WCAG AA contrast in light and dark mode.
 - **SEO** — indexing switch (turn off on staging), Google / Bing verification codes.
 - **Spam protection** — Turnstile toggle.
 

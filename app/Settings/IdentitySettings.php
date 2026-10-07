@@ -40,6 +40,12 @@ class IdentitySettings extends Settings
     /** @var array<string, string> */
     public array $hero_cta_text;
 
+    /** Original portrait photo on the private "media_private" disk; never served publicly. */
+    public ?string $portrait;
+
+    /** Small grayscale light map generated from the portrait (public disk), drawn as words on About. */
+    public ?string $portrait_map;
+
     public static function group(): string
     {
         return 'identity';
