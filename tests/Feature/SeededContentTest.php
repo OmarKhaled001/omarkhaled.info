@@ -14,14 +14,21 @@ beforeEach(function () {
     $this->seed([TaxonomySeeder::class, ServiceSeeder::class, ProjectSeeder::class, ContentSeeder::class]);
 });
 
-it('seeds six published projects and three drafts, all anonymized', function () {
-    expect(Project::query()->published()->count())->toBe(6)
-        ->and(Project::query()->where('is_published', false)->pluck('slug')->sort()->values()->all())
-        ->toBe(['print-on-demand-platform', 'qr-code-saas', 'volunteer-management-system']);
+it('reveals only the owner-approved showcase and keeps every other project anonymized', function () {
+    $showcase = ['apparel-design-marketplace', 'b2b-export-platform', 'multilingual-corporate-cms', 'print-on-demand-platform', 'travel-booking-platform'];
 
-    Project::query()->get()->each(function (Project $p) {
-        expect([$p->show_client_name, $p->show_live_link, $p->show_logo, $p->show_screenshots, $p->show_repo_link])
-            ->each->toBeFalse();
+    expect(Project::query()->published()->count())->toBe(7)
+        ->and(Project::query()->where('is_published', false)->pluck('slug')->sort()->values()->all())
+        ->toBe(['qr-code-saas', 'volunteer-management-system'])
+        ->and(Project::query()->where('show_client_name', true)->pluck('slug')->sort()->values()->all())->toBe($showcase)
+        // Only public repositories are linked.
+        ->and(Project::query()->where('show_repo_link', true)->pluck('slug')->all())->toBe(['print-on-demand-platform']);
+
+    Project::query()->get()->each(function (Project $p) use ($showcase) {
+        expect([$p->show_logo, $p->show_screenshots])->each->toBeFalse();
+        if (! in_array($p->slug, $showcase, true)) {
+            expect([$p->show_client_name, $p->show_live_link, $p->show_repo_link])->each->toBeFalse();
+        }
     });
 });
 

@@ -37,4 +37,8 @@ return [
             'email_per_day' => 3,
         ],
     ],
+
+    // Attach the cover mockups in database/seeders/media when seeding (off in tests: AVIF
+    // conversions of five 1672 px images on the sync queue would make every seeded test slow).
+    'seed_cover_mockups' => (bool) env('SEED_COVER_MOCKUPS', true),
 ];

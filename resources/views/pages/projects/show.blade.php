@@ -1,6 +1,8 @@
 @php
     /** @var \App\Presenters\PublicProject $project */
-    $sections = collect(['challenge', 'solution', 'architecture'])->mapWithKeys(fn ($s) => [$s => $project->section($s)])->filter();
+    // Results get their own block after the features; every other section is rendered in model order.
+    $sections = collect(\App\Models\Project::SECTIONS)->reject(fn ($s) => $s === 'results')
+        ->mapWithKeys(fn ($s) => [$s => $project->section($s)])->filter(fn ($html) => \App\Support\Html::text($html) !== '');
     $n = 0;
 @endphp
 <x-layouts.site :seo="$seo">

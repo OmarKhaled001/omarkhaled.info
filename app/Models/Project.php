@@ -50,10 +50,13 @@ class Project extends Model implements HasMedia
     /** Collections that can identify the client and live on the private disk until revealed. */
     public const array IDENTIFIABLE_COLLECTIONS = ['logo' => 'show_logo', 'screenshots' => 'show_screenshots'];
 
+    /** Case-study sections in reading order; every one is optional, translatable, sanitised HTML. */
+    public const array SECTIONS = ['challenge', 'goals', 'audience', 'solution', 'journey', 'architecture', 'results'];
+
     /** @var list<string> */
     public array $translatable = [
         'title', 'anonymized_title', 'summary', 'anonymized_summary', 'client_name',
-        'industry', 'role', 'challenge', 'solution', 'architecture', 'results',
+        'industry', 'role', 'challenge', 'goals', 'audience', 'solution', 'journey', 'architecture', 'results',
         'meta_title', 'meta_description',
     ];
 
@@ -73,7 +76,7 @@ class Project extends Model implements HasMedia
 
     protected $fillable = [
         'slug', 'title', 'anonymized_title', 'summary', 'anonymized_summary', 'client_name', 'client_aliases',
-        'industry', 'role', 'challenge', 'solution', 'architecture', 'results',
+        'industry', 'role', 'challenge', 'goals', 'audience', 'solution', 'journey', 'architecture', 'results',
         'engagement_type', 'schema_type', 'live_url', 'repo_url', 'year',
         'show_client_name', 'show_live_link', 'show_logo', 'show_screenshots', 'show_repo_link',
         'is_published', 'is_featured', 'sort_order', 'meta_title', 'meta_description',

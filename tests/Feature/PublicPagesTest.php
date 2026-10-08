@@ -53,14 +53,24 @@ it('never leaks a client identifier on any rendered public page (leak check)', f
     }
 });
 
-it('shows client details once a project is revealed', function () {
-    Project::query()->where('slug', 'travel-booking-platform')->update(['show_client_name' => true, 'show_live_link' => true]);
-
+it('shows client details, live links and the new sections for revealed projects', function () {
     $this->get('/en/projects/travel-booking-platform')
-        ->assertSee('Cairo Key — booking platform and brand identity')
-        ->assertSee('href="https://cairokey.net"', false);
+        ->assertSee('CairoKey — a platform for exploring stays and transport in Egypt')
+        ->assertSee('href="https://cairokey.net"', false)
+        ->assertSee('Who it’s for')
+        ->assertSee('How it works')
+        ->assertDontSee('github.com/OmarKhaled001/cairokey'); // private repository
 
-    $this->get('/ar/projects/travel-booking-platform')->assertSee('كايرو كي');
+    $this->get('/ar/projects/travel-booking-platform')->assertSee('كايرو كي')->assertSee('لمن صُمّم')->assertSee('كيف يعمل');
+
+    $this->get('/en/projects/print-on-demand-platform')->assertOk()
+        ->assertSee('Printalia — connecting design to on-demand production')
+        ->assertSee('href="https://github.com/OmarKhaled001/printalia"', false);
+});
+
+it('keeps projects without approval anonymized', function () {
+    $this->get('/en/projects/dental-scan-saas')->assertOk()->assertDontSee('ArchPrep');
+    $this->get('/en/projects')->assertDontSee('ArchPrep');
 });
 
 it('hides draft projects', function () {
@@ -72,7 +82,7 @@ it('filters projects by type and technology and keeps filtered views out of the 
     $this->get('/en/projects?type=saas')
         ->assertOk()
         ->assertSee('Dental scan preparation SaaS')
-        ->assertDontSee('Six-language corporate website')
+        ->assertDontSee('Ludic — a digital catalogue')
         ->assertSee('noindex, follow', false)
         ->assertSee('<link rel="canonical" href="'.url('/en/projects').'">', false);
 

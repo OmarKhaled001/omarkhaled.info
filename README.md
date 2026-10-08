@@ -89,6 +89,9 @@ Everything not listed keeps Laravel's defaults. `.env.example` never contains se
 
 Images are converted to AVIF + WebP in several sizes on the queue (`php artisan queue:work`). The page cache clears automatically on save.
 
+### Seeded showcase
+`database/seeders/data/projects.php` is the anonymized baseline; `database/seeders/data/project-showcase.php` holds the owner-approved public versions (copy in EN/AR, goals, audience, user journey, visibility toggles, cover mockups from `database/seeders/media/covers`). `php artisan db:seed --class=ProjectSeeder` applies both and is safe to re-run; set `SEED_COVER_MOCKUPS=false` to skip the covers. After seeding, run the queue once (`php artisan queue:work --stop-when-empty`) so the covers get their AVIF/WebP sizes.
+
 ### Other content
 - **Services** — copy, deliverables, process steps, FAQs and related projects per service.
 - **FAQs** — general questions for the home page (service FAQs live on each service).

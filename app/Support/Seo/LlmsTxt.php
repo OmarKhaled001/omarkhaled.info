@@ -110,7 +110,7 @@ final readonly class LlmsTxt
                     $out[] = "- {$fact->label}: {$fact->value}";
                 }
                 $out[] = '';
-                foreach (['challenge' => 'Challenge', 'solution' => 'Solution', 'architecture' => 'Architecture', 'results' => 'Results'] as $section => $heading) {
+                foreach (['challenge' => 'Challenge', 'goals' => 'Goals', 'audience' => 'Who it is for', 'solution' => 'Solution', 'journey' => 'How it works', 'architecture' => 'Architecture', 'results' => 'Results'] as $section => $heading) {
                     if ($text = Html::text($project->section($section))) {
                         array_push($out, "#### {$heading}", '', $text, '');
                     }

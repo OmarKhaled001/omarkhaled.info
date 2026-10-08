@@ -8,12 +8,21 @@ use App\Models\Service;
 use App\Models\Technology;
 use Illuminate\Database\Seeder;
 
-/** Seeds every project ANONYMIZED: all show_* toggles stay false until the client approves. */
+/**
+ * Seeds every project ANONYMIZED (data/projects.php), then layers the owner-approved public
+ * showcase (data/project-showcase.php): copy, extra sections, visibility toggles and cover mockups.
+ */
 class ProjectSeeder extends Seeder
 {
     public function run(): void
     {
+        $showcase = require __DIR__.'/data/project-showcase.php';
+
         foreach (require __DIR__.'/data/projects.php' as $data) {
+            $data = array_replace($data, $showcase[$data['slug']] ?? []);
+            $data['features'] = [...$data['features'], ...($data['extra_features'] ?? [])];
+            $reveal = $data['reveal'] ?? [];
+
             $project = Project::query()->updateOrCreate(['slug' => $data['slug']], [
                 'title' => $data['title'],
                 'anonymized_title' => $data['anonymized_title'],
@@ -24,23 +33,28 @@ class ProjectSeeder extends Seeder
                 'industry' => $data['industry'],
                 'role' => $data['role'],
                 'challenge' => $data['challenge'],
+                'goals' => $data['goals'] ?? null,
+                'audience' => $data['audience'] ?? null,
                 'solution' => $data['solution'],
+                'journey' => $data['journey'] ?? null,
                 'architecture' => $data['architecture'],
                 'results' => null,
                 'engagement_type' => $data['engagement_type'],
                 'schema_type' => $data['schema_type'],
                 'live_url' => $data['live_url'],
-                'repo_url' => null,
+                'repo_url' => $data['repo_url'] ?? null,
                 'year' => $data['year'],
                 'is_published' => $data['is_published'],
                 'is_featured' => $data['is_featured'],
                 'sort_order' => $data['sort_order'],
-                'show_client_name' => false,
-                'show_live_link' => false,
+                'show_client_name' => $reveal['client_name'] ?? false,
+                'show_live_link' => $reveal['live_link'] ?? false,
                 'show_logo' => false,
                 'show_screenshots' => false,
-                'show_repo_link' => false,
+                'show_repo_link' => $reveal['repo_link'] ?? false,
             ]);
+
+            $this->attachCover($project, $data['cover'] ?? null);
 
             $project->features()->delete();
             foreach ($data['features'] as $i => [$enTitle, $enBody, $arTitle, $arBody]) {
@@ -73,5 +87,21 @@ class ProjectSeeder extends Seeder
                 ->filter(fn (string $slug) => $serviceIds->has($slug))
                 ->mapWithKeys(fn (string $slug, int $i) => [$serviceIds[$slug] => ['sort_order' => $i]]));
         }
+    }
+
+    /** Public cover mockup; re-seeding keeps an already attached copy of the same file. */
+    private function attachCover(Project $project, ?string $cover): void
+    {
+        $path = $cover && config('portfolio.seed_cover_mockups') ? __DIR__.'/media/'.$cover : null;
+
+        if ($path === null || ! is_file($path)
+            || $project->getMedia('cover')->contains(fn ($media) => $media->getCustomProperty('source') === $cover)) {
+            return;
+        }
+
+        $project->addMedia($path)
+            ->preservingOriginal()
+            ->withCustomProperties(['source' => $cover])
+            ->toMediaCollection('cover');
     }
 }

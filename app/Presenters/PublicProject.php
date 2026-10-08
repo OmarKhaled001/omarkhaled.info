@@ -113,7 +113,7 @@ final readonly class PublicProject
     /** Sanitized HTML of a long-form section, or '' when empty. */
     public function section(string $name, ?string $locale = null): string
     {
-        abort_unless(in_array($name, ['challenge', 'solution', 'architecture', 'results'], true), 500);
+        abort_unless(in_array($name, Project::SECTIONS, true), 500);
 
         return Html::clean($this->field($name, $locale));
     }
@@ -208,7 +208,7 @@ final readonly class PublicProject
             $texts[] = (string) $this->role($locale);
             $texts[] = $this->imageAlt(1, $locale);
 
-            foreach (['challenge', 'solution', 'architecture', 'results'] as $section) {
+            foreach (Project::SECTIONS as $section) {
                 $texts[] = $this->section($section, $locale);
             }
 

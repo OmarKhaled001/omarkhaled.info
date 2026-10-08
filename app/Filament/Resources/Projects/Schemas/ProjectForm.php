@@ -109,7 +109,10 @@ class ProjectForm
     {
         return Tab::make('Case study')->icon('heroicon-o-document-text')->schema([
             Bilingual::rich('challenge', 'Challenge'),
+            Bilingual::rich('goals', 'Goals'),
+            Bilingual::rich('audience', 'Who it’s for'),
             Bilingual::rich('solution', 'Solution'),
+            Bilingual::rich('journey', 'How it works (user journey)'),
             Bilingual::rich('architecture', 'Architecture'),
             Bilingual::rich('results', 'Results (verified outcomes only — leave empty until you have them)'),
             Repeater::make('features')

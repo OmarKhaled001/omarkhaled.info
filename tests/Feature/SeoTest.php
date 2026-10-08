@@ -72,11 +72,12 @@ it('adds page-specific nodes: FAQPage, Service, project work and breadcrumbs', f
 });
 
 it('names the client in structured data only when revealed', function () {
-    Project::query()->where('slug', 'travel-booking-platform')->update(['show_client_name' => true]);
-
     $work = collect(jsonLd($this->get('/en/projects/travel-booking-platform')->getContent()))->firstWhere('@type', 'CreativeWork');
+    expect($work['sourceOrganization'])->toBe(['@type' => 'Organization', 'name' => 'CairoKey']);
 
-    expect($work['sourceOrganization'])->toBe(['@type' => 'Organization', 'name' => 'Cairo Key']);
+    $anonymized = collect(jsonLd($this->get('/en/projects/dental-scan-saas')->getContent()))
+        ->first(fn (array $node) => in_array($node['@type'] ?? null, ['CreativeWork', 'SoftwareApplication'], true));
+    expect($anonymized)->not->toHaveKey('sourceOrganization');
 });
 
 it('generates an Open Graph image per page and locale', function () {
@@ -93,7 +94,7 @@ it('serves a sitemap with every published page in both locales and hreflang alte
     $doc = simplexml_load_string($xml);
 
     expect($doc)->not->toBeFalse()
-        ->and(count($doc->url))->toBe(36)
+        ->and(count($doc->url))->toBe(38)
         ->and($xml)->toContain('<loc>'.url('/ar/projects/dental-scan-saas').'</loc>')
         ->and($xml)->toContain('hreflang="x-default" href="'.url('/en/services/saas-development').'"')
         ->and($xml)->not->toContain('qr-code-saas')
