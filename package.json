@@ -7,10 +7,10 @@
         "dev": "vite"
     },
     "devDependencies": {
+        "@fontsource-variable/cairo": "^5.3.0",
         "@fontsource-variable/geist": "^5.3.0",
         "@fontsource-variable/geist-mono": "^5.3.0",
-        "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
-        "@ibm/plex-sans-arabic": "^1.1.0",
+        "@fontsource/cairo": "^5.3.0",
         "@tailwindcss/vite": "^4.0.0",
         "concurrently": "^10.0.3",
         "geist": "^1.7.2",

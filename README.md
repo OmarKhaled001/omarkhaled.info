@@ -131,4 +131,4 @@ Covers locale routing, every public page × locale (one `h1`, title, description
 
 ## License
 
-Code © Omar Khaled. Fonts: Geist and Geist Mono (OFL 1.1), IBM Plex Sans Arabic (OFL 1.1) — licenses in `resources/fonts/`.
+Code © Omar Khaled. Fonts: Geist and Geist Mono (OFL 1.1), Cairo (OFL 1.1) — licenses in `resources/fonts/`.

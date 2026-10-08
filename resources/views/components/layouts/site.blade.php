@@ -3,7 +3,7 @@
     $locale = app()->getLocale();
     // Faces used above the fold. Arabic pages also render Latin terms (Laravel, Filament) in Geist.
     $fontPreloads = $locale === 'ar'
-        ? ['resources/fonts/plex-arabic-700.woff2', 'resources/fonts/plex-arabic-400.woff2', 'resources/fonts/geist-latin.woff2']
+        ? ['resources/fonts/cairo-arabic.woff2', 'resources/fonts/geist-latin.woff2']
         : ['resources/fonts/geist-latin.woff2'];
 @endphp
 <!DOCTYPE html>

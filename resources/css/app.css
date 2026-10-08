@@ -6,7 +6,7 @@
 @source '../../app/Presenters';
 
 /* ---------------------------------------------------------------------------
-   Fonts — self-hosted subsets (OFL). Geist for Latin, IBM Plex Sans Arabic for Arabic.
+   Fonts — self-hosted subsets (OFL). Geist for Latin, Cairo (variable, Arabic subset) for Arabic.
    --------------------------------------------------------------------------- */
 @font-face {
     font-family: 'Geist';
@@ -46,20 +46,13 @@
     line-gap-override: 0%;
 }
 
+/* One variable file covers every Arabic weight (200–1000), 31 KB. */
 @font-face {
-    font-family: 'IBM Plex Sans Arabic';
-    src: url('../fonts/plex-arabic-400.woff2') format('woff2');
-    font-weight: 300 500;
+    font-family: 'Cairo';
+    src: url('../fonts/cairo-arabic.woff2') format('woff2-variations'), url('../fonts/cairo-arabic.woff2') format('woff2');
+    font-weight: 200 1000;
     font-display: swap;
-    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+2010-2011, U+204F, U+2E41;
-}
-
-@font-face {
-    font-family: 'IBM Plex Sans Arabic';
-    src: url('../fonts/plex-arabic-700.woff2') format('woff2');
-    font-weight: 600 900;
-    font-display: swap;
-    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+2010-2011, U+204F, U+2E41;
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200F, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC;
 }
 
 /* ---------------------------------------------------------------------------
@@ -140,8 +133,8 @@
 }
 
 @theme {
-    --font-sans: 'Geist', 'Geist Fallback', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
-    --font-arabic: 'IBM Plex Sans Arabic', 'Geist', 'Geist Fallback', Tahoma, ui-sans-serif, sans-serif;
+    --font-sans: 'Geist', 'Geist Fallback', 'Cairo', ui-sans-serif, system-ui, sans-serif;
+    --font-arabic: 'Cairo', 'Geist', 'Geist Fallback', Tahoma, ui-sans-serif, sans-serif;
     --font-mono: 'Geist Mono', 'Geist Mono Fallback', ui-monospace, SFMono-Regular, Menlo, monospace;
 
     --text-display: clamp(2.5rem, 1.35rem + 4.3vw, 4.9rem);
@@ -576,6 +569,13 @@
     -webkit-mask-composite: source-in;
     mask-image: var(--feather);
     mask-composite: intersect;
+}
+
+/* Mono, letter-spaced labels are a Latin device: spacing breaks Arabic letter joining.
+   Unlayered on purpose, so it wins over the .slug / .font-mono utilities. */
+:lang(ar) :is(.slug, .font-mono, .hero-label-detail) {
+    font-family: var(--font-arabic);
+    letter-spacing: 0;
 }
 
 /* Directional icons mirror in RTL. */

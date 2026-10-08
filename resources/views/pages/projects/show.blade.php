@@ -19,25 +19,26 @@
                 <h1 class="mt-5 max-w-4xl text-h1 font-semibold tracking-display text-balance">{{ $project->title() }}</h1>
                 <p class="mt-6 max-w-3xl text-lede text-muted text-pretty">{{ $project->summary() }}</p>
 
-                <dl class="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border text-sm sm:grid-cols-2 lg:grid-cols-4">
+                {{-- Wrapping flex: items grow to fill each row, so 4–7 facts never leave empty cells. --}}
+                <dl class="mt-12 flex flex-wrap gap-px overflow-hidden rounded-lg border border-border bg-border text-sm">
                     @if ($client = $project->clientName())
-                        <div class="bg-surface p-5"><dt class="slug">{{ __('projects.meta.client') }}</dt><dd class="mt-2 font-medium">{{ $client }}</dd></div>
+                        <div class="flex-[1_1_11rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.client') }}</dt><dd class="mt-2 font-medium">{{ $client }}</dd></div>
                     @endif
                     @if ($project->industry())
-                        <div class="bg-surface p-5"><dt class="slug">{{ __('projects.meta.industry') }}</dt><dd class="mt-2 font-medium">{{ $project->industry() }}</dd></div>
+                        <div class="flex-[1_1_11rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.industry') }}</dt><dd class="mt-2 font-medium">{{ $project->industry() }}</dd></div>
                     @endif
                     @if ($project->role())
-                        <div class="bg-surface p-5 sm:col-span-2 lg:col-span-1"><dt class="slug">{{ __('projects.meta.role') }}</dt><dd class="mt-2 font-medium">{{ $project->role() }}</dd></div>
+                        <div class="flex-[2_1_18rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.role') }}</dt><dd class="mt-2 font-medium">{{ $project->role() }}</dd></div>
                     @endif
-                    <div class="bg-surface p-5"><dt class="slug">{{ __('projects.meta.engagement') }}</dt><dd class="mt-2 font-medium">{{ $project->engagementLabel() }}</dd></div>
+                    <div class="flex-[1_1_11rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.engagement') }}</dt><dd class="mt-2 font-medium">{{ $project->engagementLabel() }}</dd></div>
                     @if ($project->year())
-                        <div class="bg-surface p-5"><dt class="slug">{{ __('projects.meta.year') }}</dt><dd class="mt-2 font-mono font-medium">{{ $project->year() }}</dd></div>
+                        <div class="flex-[1_1_11rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.year') }}</dt><dd class="mt-2 font-mono font-medium">{{ $project->year() }}</dd></div>
                     @endif
                     @if ($live = $project->liveUrl())
-                        <div class="bg-surface p-5"><dt class="slug">{{ __('projects.meta.live') }}</dt><dd class="mt-2 font-medium"><a href="{{ $live }}" class="link-arrow" rel="noopener" target="_blank">{{ $project->liveHost() }} <x-lucide-arrow-up-right class="icon-dir size-4" aria-hidden="true" /></a></dd></div>
+                        <div class="flex-[1_1_11rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.live') }}</dt><dd class="mt-2 font-medium"><a href="{{ $live }}" class="link-arrow" rel="noopener" target="_blank">{{ $project->liveHost() }} <x-lucide-arrow-up-right class="icon-dir size-4" aria-hidden="true" /></a></dd></div>
                     @endif
                     @if ($repo = $project->repoUrl())
-                        <div class="bg-surface p-5"><dt class="slug">{{ __('projects.meta.repo') }}</dt><dd class="mt-2 font-medium"><a href="{{ $repo }}" class="link-arrow" rel="noopener" target="_blank">GitHub <x-lucide-arrow-up-right class="icon-dir size-4" aria-hidden="true" /></a></dd></div>
+                        <div class="flex-[1_1_11rem] bg-surface p-5"><dt class="slug">{{ __('projects.meta.repo') }}</dt><dd class="mt-2 font-medium"><a href="{{ $repo }}" class="link-arrow" rel="noopener" target="_blank">GitHub <x-lucide-arrow-up-right class="icon-dir size-4" aria-hidden="true" /></a></dd></div>
                     @endif
                 </dl>
                 @unless ($project->isRevealed())
