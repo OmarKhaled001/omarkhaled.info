@@ -1,0 +1,62 @@
+{
+  "resources/css/admin-fonts.css": {
+    "file": "assets/admin-fonts-CPxC-YkH.css",
+    "name": "admin-fonts",
+    "names": [
+      "admin-fonts.css"
+    ],
+    "src": "resources/css/admin-fonts.css",
+    "isEntry": true,
+    "assets": [
+      "assets/geist-latin-BgDaEnEv.woff2",
+      "assets/cairo-arabic-CJWMIGCx.woff2"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-MecAQ0b4.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "assets": [
+      "assets/geist-latin-BgDaEnEv.woff2",
+      "assets/geist-mono-latin-XN7g48iV.woff2",
+      "assets/cairo-arabic-CJWMIGCx.woff2"
+    ]
+  },
+  "resources/fonts/cairo-arabic.woff2": {
+    "file": "assets/cairo-arabic-CJWMIGCx.woff2",
+    "src": "resources/fonts/cairo-arabic.woff2"
+  },
+  "resources/fonts/geist-latin.woff2": {
+    "file": "assets/geist-latin-BgDaEnEv.woff2",
+    "src": "resources/fonts/geist-latin.woff2"
+  },
+  "resources/fonts/geist-mono-latin.woff2": {
+    "file": "assets/geist-mono-latin-XN7g48iV.woff2",
+    "src": "resources/fonts/geist-mono-latin.woff2"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BQTlzeKK.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/hero-scene.js"
+    ]
+  },
+  "resources/js/hero-scene.js": {
+    "file": "assets/hero-scene-B5MwEBJg.js",
+    "name": "hero-scene",
+    "src": "resources/js/hero-scene.js",
+    "isDynamicEntry": true
+  },
+  "resources/js/turnstile.js": {
+    "file": "assets/turnstile-DXlzuLVT.js",
+    "name": "turnstile",
+    "src": "resources/js/turnstile.js",
+    "isEntry": true
+  }
+}

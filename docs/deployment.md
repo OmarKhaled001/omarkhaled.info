@@ -124,6 +124,8 @@ The app is host-agnostic: PHP 8.4, MySQL 8, a `database` queue and the Laravel s
 
 Works on hosts with PHP 8.4, MySQL, SSH or a file manager, and cron (cPanel, Hostinger, etc.).
 
+> **Hosts that disable `proc_open` (Hostinger shared/Cloud hosting).** Nothing on the deploy or runtime path starts a child process: `composer install` runs no Artisan scripts (they live in `post-update-cmd`, which only runs on your machine), scheduled tasks use in-process `Schedule::call`, and image conversions skip the external optimizers. The compiled front-end (`public/build`) and Filament's published assets (`public/{css,js,fonts}/filament`) are committed, so a Git deploy that only runs `composer install` serves a complete site. **Run `npm run build` (and `php artisan filament:upgrade` after updating Filament) before committing.** Verified locally with `php -d disable_functions=proc_open,exec,shell_exec,system,passthru,popen` for `composer dump-autoload`, `schedule:run` and the cover conversions.
+
 1. **Build locally** — `composer install --no-dev --optimize-autoloader` and `npm ci && npm run build` on your machine.
 2. **Upload** everything except `node_modules/`, `.git/` and `storage/app/seed-media/` (client captures stay private; upload them separately only if you want to import them).
 3. **Document root** — point the domain to `public/`. If the host forces `public_html`, put the project one level up and make `public_html` a symlink to `public/` (or copy `public/` into `public_html` and adjust the two paths in `public_html/index.php`).

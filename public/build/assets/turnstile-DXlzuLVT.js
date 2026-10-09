@@ -1,0 +1,1 @@
+window.onTurnstile=e=>{let t=document.querySelector(`.cf-turnstile`)?.closest(`[wire\\:id]`);t&&window.Livewire&&window.Livewire.find(t.getAttribute(`wire:id`)).set(`turnstileToken`,e,!1)},document.addEventListener(`livewire:init`,()=>{window.Livewire.on(`turnstile-reset`,()=>window.turnstile?.reset())});
