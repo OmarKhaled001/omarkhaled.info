@@ -1,0 +1,12 @@
+# Hosts that serve the repository root as the web root (e.g. a Hostinger Git deploy into
+# public_html): send every request into public/, so nothing outside it — .env, vendor/,
+# storage/, composer files — can ever be reached. Unused when the web root is public/ itself.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Fallback if mod_rewrite is unavailable: refuse everything at this level.
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

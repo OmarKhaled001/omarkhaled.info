@@ -128,7 +128,7 @@ Works on hosts with PHP 8.4, MySQL, SSH or a file manager, and cron (cPanel, Hos
 
 1. **Build locally** — `composer install --no-dev --optimize-autoloader` and `npm ci && npm run build` on your machine.
 2. **Upload** everything except `node_modules/`, `.git/` and `storage/app/seed-media/` (client captures stay private; upload them separately only if you want to import them).
-3. **Document root** — point the domain to `public/`. If the host forces `public_html`, put the project one level up and make `public_html` a symlink to `public/` (or copy `public/` into `public_html` and adjust the two paths in `public_html/index.php`).
+3. **Document root** — point the domain to `public/`. If the host serves the repository root instead (Hostinger's Git deploy into `public_html`), the root `.htaccess` routes every request into `public/`, so `.env`, `vendor/` and `storage/` stay unreachable. If the host forces `public_html`, put the project one level up and make `public_html` a symlink to `public/` (or copy `public/` into `public_html` and adjust the two paths in `public_html/index.php`).
 4. **Environment** — create `.env` from [§5](#5-production-env) and set **`QUEUE_VIA_SCHEDULER=true`** (no Supervisor available).
 5. **Run once via SSH** (or the host's "PHP command" tool):
 
